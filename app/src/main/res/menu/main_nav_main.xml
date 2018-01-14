@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_sell"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:icon="@android:drawable/stat_notify_more"
+            android:title="Sell" />
+        <item
+            android:id="@+id/nav_account"
+            android:icon="@drawable/ic_account_circle"
+            android:title="Account" />
+        <item
+            android:id="@+id/nav_categories"
+            android:icon="@android:drawable/ic_menu_sort_by_size"
+            android:title="Categories" />
+        <item
+            android:id="@+id/nav_recent"
+            android:icon="@android:drawable/ic_menu_recent_history"
+            android:title="Recent" />
+    </group>
+
+    <item android:title="other">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@android:drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@mipmap/ic_settings"
+                android:title="Settings" />
+        </menu>
+    </item>
+
+</menu>
