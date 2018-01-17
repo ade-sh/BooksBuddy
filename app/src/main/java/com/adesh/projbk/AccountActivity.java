@@ -85,7 +85,7 @@ public class AccountActivity extends AppCompatActivity {
                 URL url;
                 try {
                     //setup HttpURLConnection class to send aand receive data from php and mysql
-                    url = new URL("http://10.0.3.2/getUserInfo.inc.php");
+                    url = new URL((R.string.httpUrl) + "/getUserInfo.inc.php");
                     conn = (HttpURLConnection) url.openConnection();
                     Thread.sleep(2000);
                     conn.setConnectTimeout(4000);

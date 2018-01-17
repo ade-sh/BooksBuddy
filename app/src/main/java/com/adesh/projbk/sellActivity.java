@@ -2,6 +2,7 @@ package com.adesh.projbk;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -34,6 +36,15 @@ public class sellActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sell);
+        SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
+        Boolean LoginStatus = sp.getBoolean("IsLogged", false);
+        Log.i("LoginStaus", LoginStatus.toString());
+        if (!LoginStatus) {
+            Toast.makeText(sellActivity.this, "You need to login first", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(sellActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
         etbkName = (EditText) findViewById(R.id.etSell_bkname);
         etbkdisc = (EditText) findViewById(R.id.etSell_bkDisc);
         etPrice = (EditText) findViewById(R.id.etSell_price);
@@ -112,9 +123,8 @@ public class sellActivity extends AppCompatActivity {
                 data.put("bookName", bookNam);
                 data.put("bookDisc", bokDisc);
                 data.put("price", bookPrice);
-                data.put("nodata", "nodata");
 
-                String result = urc.sendPostRequest("http://10.0.3.2/userSell.php", data);
+                String result = urc.sendPostRequest((R.string.httpUrl) + "/userSell.php", data);
                 return result;
             }
 
@@ -127,5 +137,6 @@ public class sellActivity extends AppCompatActivity {
         }
         UploadData ud = new UploadData();
         ud.execute(bitmap);
+        finish();
     }
 }

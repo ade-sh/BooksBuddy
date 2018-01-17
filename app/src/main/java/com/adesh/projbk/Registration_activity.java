@@ -187,7 +187,7 @@ public class Registration_activity extends AppCompatActivity {
             URL url;
             try {
                 //setup HttpURLConnection class to send aand receive data from php and mysql
-                url = new URL("http://10.0.3.2/register.inc.php");
+                url = new URL((R.string.httpUrl) + "/register.inc.php");
                 conn = (HttpURLConnection) url.openConnection();
                 Thread.sleep(2000);
                 conn.setConnectTimeout(4000);
@@ -246,9 +246,16 @@ public class Registration_activity extends AppCompatActivity {
                 editor.putString("Password", password);
                 editor.putBoolean("IsLogged", true);
                 editor.apply();
-                finish();
+                /*
+                ProgressDialog pd=ProgressDialog.show(Registration_activity.this,"Please wait","Loading",true,false);
+                LoginActivity la=new LoginActivity();
+                LoginActivity.UserLoginTask ust=la.new UserLoginTask(email,password);
+                ust.execute((Void) null);
+                pd.dismiss();
+                */
                 Intent smp = new Intent(getApplicationContext(), AccountActivity.class);
                 startActivity(smp);
+                finish();
             } else {
                 Log.e("php excep", result);
                 Toast.makeText(getApplicationContext(), "cannot register now" + result, Toast.LENGTH_LONG).show();

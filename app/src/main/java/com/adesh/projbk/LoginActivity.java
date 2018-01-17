@@ -272,7 +272,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             URL url;
             try {
                 //setup HttpURLConnection class to send aand receive data from php and mysql
-                url = new URL("http://10.0.3.2/login.inc.php");
+                url = new URL((R.string.httpUrl) + "/login.inc.php");
                 conn = (HttpURLConnection) url.openConnection();
                 Thread.sleep(2000);
                 conn.setConnectTimeout(4000);
@@ -317,8 +317,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return ("interrupted");
             }
 
-
-            // TODO: register the new account here.
         }
 
         @Override
