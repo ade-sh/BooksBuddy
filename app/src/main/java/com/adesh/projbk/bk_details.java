@@ -145,11 +145,11 @@ public class bk_details extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            String ustr = Getjson.Image_Url[0].substring(15);
+            String ustr = Getjson.arrurls.get(0).substring(15);
             Log.i("ustr", ustr);
-            et_bkName.setText(Getjson.Image_Name[0]);
-            et_bkDisk.setText(Getjson.Img_disc[0]);
-            ratingBar.setRating(Getjson.Img_Ratin[0]);
+            et_bkName.setText(Getjson.arrname.get(0));
+            et_bkDisk.setText(Getjson.arrDisc.get(0));
+            ratingBar.setRating(Integer.parseInt(Getjson.arrRatin.get(0)));
             Picasso.with(getApplicationContext()).load(("http://10.0.3.2" + ustr)).placeholder(R.mipmap.im_defbk).into(bk_img);
 
             //bk_img.setImageBitmap(getjsonobj.bitmaps[0]);

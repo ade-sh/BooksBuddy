@@ -124,7 +124,7 @@ public class sellActivity extends AppCompatActivity {
                 data.put("bookDisc", bokDisc);
                 data.put("price", bookPrice);
 
-                String result = urc.sendPostRequest((R.string.httpUrl) + "/userSell.php", data);
+                String result = urc.sendPostRequest(getString(R.string.httpUrl) + "/userSell.php", data);
                 return result;
             }
 
