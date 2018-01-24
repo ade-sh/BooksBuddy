@@ -19,11 +19,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+
+import cz.msebera.android.httpclient.Header;
 
 public class sellActivity extends AppCompatActivity {
     android.net.Uri filePath;
@@ -31,6 +36,7 @@ public class sellActivity extends AppCompatActivity {
     ImageView ivPreview;
     Bitmap bitmap;
     Button getImage, btnsell;
+    String result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +57,7 @@ public class sellActivity extends AppCompatActivity {
         getImage = (Button) findViewById(R.id.btn_getImage);
         btnsell = (Button) findViewById(R.id.btnSell_upload);
         ivPreview = (ImageView) findViewById(R.id.ivPreview);
+        getUserId();
         getImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,7 +76,13 @@ public class sellActivity extends AppCompatActivity {
         btnsell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!result.contains("") || !result.contains("null")) {
+
                 uploadData();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Some error occurred,Try again", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "result=" + result, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -123,7 +136,7 @@ public class sellActivity extends AppCompatActivity {
                 data.put("bookName", bookNam);
                 data.put("bookDisc", bokDisc);
                 data.put("price", bookPrice);
-
+                data.put("U_id", result);
                 String result = urc.sendPostRequest(getString(R.string.httpUrl) + "/userSell.php", data);
                 return result;
             }
@@ -138,5 +151,31 @@ public class sellActivity extends AppCompatActivity {
         UploadData ud = new UploadData();
         ud.execute(bitmap);
         finish();
+    }
+
+    public void getUserId() {
+
+        SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
+        final String username = sp.getString("UserName", null);
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.put("username", username);
+        client.post("http://10.0.3.2/getUserID.inc.php", params, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Toast.makeText(getApplicationContext(), "Cannot Connect", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                if (responseString.contains("false") && !result.contains("null")) {
+                    Toast.makeText(getApplicationContext(), "Some error occurred", Toast.LENGTH_SHORT).show();
+                } else {
+                    result = responseString.trim();
+                    Log.i("Uid in sellact", result);
+                    Toast.makeText(getApplicationContext(), "result=" + result, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }

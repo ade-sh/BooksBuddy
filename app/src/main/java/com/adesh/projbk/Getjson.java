@@ -17,6 +17,7 @@ public class Getjson {
     public static ArrayList<String> arrname;
     public static ArrayList<String> arrid;
     public static ArrayList<String> arrRatin;
+    public static ArrayList<String> arrUploader;
     public static ArrayList<String> arrurls;
     public static ArrayList<String> arrDisc;
     public static int[] Img_Ratin;
@@ -57,6 +58,7 @@ public class Getjson {
             arrRatin = new ArrayList<>();
             arrurls = new ArrayList<>();
             arrDisc = new ArrayList<>();
+            arrUploader = new ArrayList<>();
 
             for (int i = 0; i < urls.length(); i++) {
                 //inserting into Arraylist
@@ -65,6 +67,7 @@ public class Getjson {
                 arrRatin.add(urls.getJSONObject(i).getString("Rating"));
                 arrid.add(urls.getJSONObject(i).getString(B_id));
                 arrDisc.add(urls.getJSONObject(i).getString("b_disc"));
+                arrUploader.add(urls.getJSONObject(i).getString("uploader"));
             }
         } catch (JSONException e) {
             e.printStackTrace();

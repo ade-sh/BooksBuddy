@@ -42,12 +42,12 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<String> arrid;
     public ArrayList<String> arrRatin;
     public ArrayList<String> arrurls;
+    public ArrayList<String> arruploader;
     RecyclerView bkObj;
     bkCustomAdapter bkAdapter;
     int offset = 0;
     int totalitem = 0;
     int startitem = 1;
-    int limit = 3;
     EndlessRecyclerViewScrollListener scrollListener;
     LinearLayoutManager llm;
 
@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         arrname = new ArrayList<>();
         arrRatin = new ArrayList<>();
         arrurls = new ArrayList<>();
+        arruploader = new ArrayList<>();
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_widget);
@@ -75,13 +76,14 @@ public class MainActivity extends AppCompatActivity {
         toggle.setDrawerIndicatorEnabled(true);
         toggle.syncState();
         llm = new LinearLayoutManager(this);
-        bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin);
+
+        bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin, arruploader);
         bkObj.setAdapter(bkAdapter);
         bkObj.setLayoutManager(llm);
         scrollListener = new EndlessRecyclerViewScrollListener(llm) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                Toast.makeText(MainActivity.this, "page end reached", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "page end reached", Toast.LENGTH_SHORT).show();
                 offset = offset + page;
                 Log.i("offset", offset + "");
                 totalitem = totalItemsCount + 1;
@@ -160,9 +162,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getURLs() {
+
         BufferedReader bufferedReader = null;
         try {
-
             URL url = new URL(getString(R.string.httpUrl) + "/getImages.inc.php");
             Log.d("Url in dib", url.toString());
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -217,13 +219,15 @@ public class MainActivity extends AppCompatActivity {
             protected void onPostExecute(Void v) {
                 super.onPostExecute(v);
                 loading.dismiss();
+                Log.i("getImages", Getjson.arrname.get(Getjson.arrname.size() - 1));
                 arrname.add(Getjson.arrname.get(Getjson.arrname.size() - 1));
                 arrid.add(Getjson.arrid.get(Getjson.arrid.size() - 1));
                 arrurls.add(Getjson.arrurls.get(Getjson.arrurls.size() - 1));
                 arrRatin.add(Getjson.arrRatin.get(Getjson.arrRatin.size() - 1));
-                bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin);
+                arruploader.add(Getjson.arrUploader.get(Getjson.arrRatin.size() - 1));
+                bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin, arruploader);
+                Log.i("getImages arr", arrname.get(0));
                 bkAdapter.notifyDataSetChanged();
-                //bkAdapter.notifyItemRangeInserted(startitem,totalitem);
                 scrollListener.resetState();
             }
 
@@ -235,5 +239,19 @@ public class MainActivity extends AppCompatActivity {
         }
         GetImages getImages = new GetImages();
         getImages.execute();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        bkAdapter.notifyDataSetChanged();
+        scrollListener.resetState();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        bkAdapter.notifyDataSetChanged();
+        scrollListener.resetState();
     }
 }

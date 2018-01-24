@@ -42,6 +42,7 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 
 
+
 /**
  * A login screen that offers login via email/password.
  */
@@ -49,6 +50,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 
     Button Regis;
+    String Memail, Mpassword;
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -58,6 +60,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +152,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
+
         }
     }
 
@@ -338,6 +342,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         }
 
+
         @Override
         protected void onCancelled() {
             mAuthTask = null;
@@ -345,6 +350,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-
 }
+
 

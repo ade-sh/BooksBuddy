@@ -29,10 +29,20 @@
             <RatingBar
                 android:id="@+id/rb_bkRating"
                 style="@style/Widget.AppCompat.RatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="197dp"
+                android:layout_height="39dp"
+                android:clickable="false"
+                android:isIndicator="true"
                 android:numStars="5"
                 android:transitionName="@string/main_transition_rb" />
+
+            <Button
+                android:id="@+id/btn_buy"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="serif-monospace"
+                android:text="Buy" />
 
             <TextView
                 android:id="@+id/mtv_view"
@@ -41,7 +51,7 @@
 
             <TextView
                 android:id="@+id/et_bkName"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"

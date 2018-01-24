@@ -9,6 +9,8 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -31,6 +33,7 @@ public class bk_details extends AppCompatActivity {
 
     public Getjson getjsonobj;
     ImageView bk_img;
+    Button btnBuy;
     RatingBar ratingBar;
     private TextView mTextMessage, et_bkName, et_bkDisk;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -58,7 +61,7 @@ public class bk_details extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bk_details);
-
+        btnBuy = (Button) findViewById(R.id.btn_buy);
         mTextMessage = (TextView) findViewById(R.id.mtv_view);
         et_bkName = (TextView) findViewById(R.id.et_bkName);
         et_bkDisk = (TextView) findViewById(R.id.tv_deatils);
@@ -147,12 +150,14 @@ public class bk_details extends AppCompatActivity {
         protected void onPostExecute(String result) {
             String ustr = Getjson.arrurls.get(0).substring(15);
             Log.i("ustr", ustr);
+            if (Getjson.arrUploader.get(0).contains("user")) {
+                ratingBar.setVisibility(View.GONE);
+            }
             et_bkName.setText(Getjson.arrname.get(0));
             et_bkDisk.setText(Getjson.arrDisc.get(0));
             ratingBar.setRating(Integer.parseInt(Getjson.arrRatin.get(0)));
             Picasso.with(getApplicationContext()).load(("http://10.0.3.2" + ustr)).placeholder(R.mipmap.im_defbk).into(bk_img);
 
-            //bk_img.setImageBitmap(getjsonobj.bitmaps[0]);
         }
     }
 }

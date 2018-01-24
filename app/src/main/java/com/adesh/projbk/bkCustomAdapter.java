@@ -21,14 +21,16 @@ public class bkCustomAdapter extends RecyclerView.Adapter<bkCustomAdapter.ViewHo
     ArrayList<String> arrId;
     ArrayList<String> arrUrl;
     ArrayList<String> arrRatin;
+    ArrayList<String> arrUploader;
     private Context context1;
 
-    public bkCustomAdapter(Context context, ArrayList book, ArrayList Urls, ArrayList<String> Img_id, ArrayList arrRatin) {
+    public bkCustomAdapter(Context context, ArrayList book, ArrayList Urls, ArrayList<String> Img_id, ArrayList arrRatin, ArrayList arrUploader) {
         this.arrBook = book;
         this.arrUrl = Urls;
         this.context1 = context;
         this.arrId = Img_id;
         this.arrRatin = arrRatin;
+        this.arrUploader = arrUploader;
     }
 
     private Context getContext() {
@@ -46,7 +48,11 @@ public class bkCustomAdapter extends RecyclerView.Adapter<bkCustomAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(bkCustomAdapter.ViewHolder viewHolder, final int position) {
-
+        if (arrUploader.get(position).contains("user")) {
+            viewHolder.rate.setVisibility(View.GONE);
+            viewHolder.Uploader.setVisibility(View.VISIBLE);
+            viewHolder.Uploader.setText("By User");
+        }
         viewHolder.Title.setText(arrBook.get(position));
         viewHolder.img.setTag(arrId.get(position));
         viewHolder.rate.setRating(Integer.parseInt(arrRatin.get(position)));
@@ -73,6 +79,7 @@ public class bkCustomAdapter extends RecyclerView.Adapter<bkCustomAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView Title;
+        TextView Uploader;
         ImageView img;
         RatingBar rate;
         LinearLayout layout;
@@ -83,6 +90,7 @@ public class bkCustomAdapter extends RecyclerView.Adapter<bkCustomAdapter.ViewHo
             Title = (TextView) itemView.findViewById(R.id.bkText);
             img = (ImageView) itemView.findViewById(R.id.bkImg);
             rate = (RatingBar) itemView.findViewById(R.id.ratingBar);
+            Uploader = (TextView) itemView.findViewById(R.id.tvUploader);
     }
 }
 
