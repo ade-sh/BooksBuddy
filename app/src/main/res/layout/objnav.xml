@@ -54,7 +54,7 @@
             android:elevation="1dp"
             android:fontFamily="monospace"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:visibility="invisible" />
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/bkText"

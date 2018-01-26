@@ -23,7 +23,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -46,9 +45,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView bkObj;
     bkCustomAdapter bkAdapter;
     int offset = 0;
-    int totalitem = 0;
-    int startitem = 1;
-    int yy = 0;
+
     EndlessRecyclerViewScrollListener scrollListener;
     LinearLayoutManager llm;
 
@@ -84,13 +81,8 @@ public class MainActivity extends AppCompatActivity {
         scrollListener = new EndlessRecyclerViewScrollListener(llm) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                Toast.makeText(MainActivity.this, "page end reached", Toast.LENGTH_SHORT).show();
                 offset = offset + page;
-                Log.i("offset", offset + "");
-                totalitem = totalItemsCount + 1;
-                startitem = startitem + page;
                 refreshState();
-                Log.i("start and end", startitem + "" + totalitem + "");
             }
 
             @Override
@@ -173,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
         BufferedReader bufferedReader = null;
         try {
             URL url = new URL(getString(R.string.httpUrl) + "/getImages.inc.php");
-            Log.d("Url in dib", url.toString());
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setDoInput(true);
             con.setConnectTimeout(4000);
@@ -199,11 +190,10 @@ public class MainActivity extends AppCompatActivity {
             String json;
             while ((json = bufferedReader.readLine()) != null) {
                 sb.append(json + "\n");
-                Log.d("wsb dib", json);
             }
-            Log.d("sb dib", sb.toString());
+
             getjsonobj = new Getjson(sb.toString().trim());
-            Log.d("Mainactivity getjsonnoj", getjsonobj.toString());
+
             getImages();
             }
         } catch (Exception e) {
@@ -258,7 +248,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        bkAdapter.notifyDataSetChanged();
         scrollListener.resetState();
+        bkAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        scrollListener.resetState();
+        bkAdapter.notifyDataSetChanged();
     }
 }

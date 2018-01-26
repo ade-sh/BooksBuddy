@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/llsmg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:visibility="visible">
+
+    <ImageButton
+        android:id="@+id/ibCancelDialog"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_above="@+id/linearLayout"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:elevation="2dp"
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="#FFFFFF"
+        android:orientation="vertical"
+        android:paddingBottom="4dp">
+
+        <Button
+            android:id="@+id/btncngImg"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:onClick="onClick"
+            android:text="Get Profile pic" />
+
+        <Button
+            android:id="@+id/btnRmvImg"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onClick"
+            android:text="Remove Profile pic" />
+
+    </LinearLayout>
+
+</RelativeLayout>
