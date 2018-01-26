@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     int offset = 0;
     int totalitem = 0;
     int startitem = 1;
+    int yy = 0;
     EndlessRecyclerViewScrollListener scrollListener;
     LinearLayoutManager llm;
 
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         arruploader = new ArrayList<>();
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_widget);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_widget);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -90,6 +91,12 @@ public class MainActivity extends AppCompatActivity {
                 startitem = startitem + page;
                 refreshState();
                 Log.i("start and end", startitem + "" + totalitem + "");
+            }
+
+            @Override
+            public void onScrolled(RecyclerView view, int dx, int dy) {
+                super.onScrolled(view, dx, dy);
+
             }
         };
         bkObj.addOnScrollListener(scrollListener);
