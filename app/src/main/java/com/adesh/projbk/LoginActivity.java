@@ -27,6 +27,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -41,6 +45,7 @@ import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import cz.msebera.android.httpclient.Header;
 
 
 /**
@@ -51,6 +56,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     Button Regis;
     String Memail, Mpassword;
+    String Uid;
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -329,10 +335,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
             Log.i("result in Login", result);
             if (result.contains("true")) {
+
+                AsyncHttpClient client = new AsyncHttpClient();
+                RequestParams params = new RequestParams();
+                params.put("username", mEmail);
+                client.post("http://10.0.3.2/getUserID.inc.php", params, new TextHttpResponseHandler() {
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                        Uid = responseString;
+                    }
+                });
                 SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putString("UserName", mEmail);
                 editor.putString("Password", mPassword);
+                editor.putString("Uid", Uid);
                 editor.putBoolean("IsLogged", true);
                 editor.apply();
                 finish();

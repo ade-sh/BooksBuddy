@@ -23,6 +23,7 @@ public class Getjson {
     public static int[] Img_Ratin;
     public static String JUserName = "";
     public static String JEmail = "";
+    public static String JProfilePic = "";
     public static String JPhone = "";
 
     public String json;
@@ -79,6 +80,7 @@ public class Getjson {
             JUserName = urls.getJSONObject(0).getString("Name");
             JEmail = urls.getJSONObject(0).getString("Email");
             JPhone = urls.getJSONObject(0).getString("phone");
+            JProfilePic = urls.getJSONObject(0).getString("profile_pic");
         } catch (JSONException e) {
             e.printStackTrace();
         }

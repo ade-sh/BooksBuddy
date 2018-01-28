@@ -77,7 +77,6 @@ public class sellActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!result.contains("") || !result.contains("null")) {
-
                 uploadData();
                 } else {
                     Toast.makeText(getApplicationContext(), "Some error occurred,Try again", Toast.LENGTH_SHORT).show();
@@ -130,7 +129,6 @@ public class sellActivity extends AppCompatActivity {
             protected String doInBackground(Bitmap... params) {
                 Bitmap bitmap = params[0];
                 String uploadImage = getStringImage(bitmap);
-
                 HashMap<String, String> data = new HashMap<>();
                 data.put("image", uploadImage);
                 data.put("bookName", bookNam);
@@ -172,8 +170,6 @@ public class sellActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Some error occurred", Toast.LENGTH_SHORT).show();
                 } else {
                     result = responseString.trim();
-                    Log.i("Uid in sellact", result);
-                    Toast.makeText(getApplicationContext(), "result=" + result, Toast.LENGTH_SHORT).show();
                 }
             }
         });

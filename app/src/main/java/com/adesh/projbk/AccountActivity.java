@@ -1,12 +1,10 @@
 package com.adesh.projbk;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,21 +13,28 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -40,6 +45,8 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import cz.msebera.android.httpclient.Header;
+
 public class AccountActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button btnLogout, btnsavImg, btncngImg;
@@ -47,9 +54,9 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
     ImageView ivAccImg, ivcmgImg;
     ListView lvaccdetail;
     android.net.Uri filePath;
+    String res;
     Bitmap bitmap;
-    ImageButton ivCanceldialog;
-    Dialog imgChanger;
+    uploadRequestHandler urc = new uploadRequestHandler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,15 +66,16 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
         setSupportActionBar(toolbar);
         final SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
         String SPusrname = sp.getString("UserName", "user");
-        String arr[] = {SPusrname, "", ""};
+        String arr[] = {SPusrname, "", "", "Password", "Location", "My Purchases", "My Orders", "Request", "Sold", "All Transactions"};
+        getUserId();
         ivAccImg = (ImageView) findViewById(R.id.ivAccImg);
         lvaccdetail = (ListView) findViewById(R.id.lvaccdetail);
         btnsavImg = (Button) findViewById(R.id.btnsavImg);
         btncngImg = (Button) findViewById(R.id.btncngImg);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.llaccdetail, arr);
         lvaccdetail.setAdapter(adapter);
-        ivCanceldialog = (ImageButton) findViewById(R.id.ibCancelDialog);
         btnLogout = (Button) findViewById(R.id.btn_Logout);
+        btnsavImg.setOnClickListener(this);
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,6 +99,8 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
         startFill();
 
     }
+
+    //Set User Data
     public void startFill() {
         class startFilling extends AsyncTask<Void, Void, Void> {
             String username;
@@ -160,10 +170,25 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             protected void onPostExecute(Void v) {
                 super.onPostExecute(v);
-                Log.i("Username,phone,Email", Getjson.JUserName + "" + Getjson.JPhone);
-                String arr[] = {"Username: " + Getjson.JUserName, "Phone no: " + Getjson.JPhone, "Emailid: " + Getjson.JEmail};
+                String arr[] = {"Username: " + Getjson.JUserName, "Phone no: " + Getjson.JPhone, "Emailid: " + Getjson.JEmail, "Password", "Location", "My Purchases", "My Orders", "Request", "Sold", "All Transactions"};
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.llaccdetail, arr);
                 lvaccdetail.setAdapter(adapter);
+                Log.i("Prof Pic url", "http://10.0.3.2/" + Getjson.JProfilePic.trim());
+                Picasso.with(AccountActivity.this).load("http://10.0.3.2/" + Getjson.JProfilePic.trim()).resize(300, 300).into(ivAccImg, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        Bitmap imageBitmap = ((BitmapDrawable) ivAccImg.getDrawable()).getBitmap();
+                        RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(getResources(), imageBitmap);
+                        imageDrawable.setCircular(true);
+                        imageDrawable.setCornerRadius(Math.max(imageBitmap.getWidth(), imageBitmap.getHeight()) / 2.0f);
+                        ivAccImg.setImageDrawable(imageDrawable);
+                    }
+
+                    @Override
+                    public void onError() {
+                        ivAccImg.setImageResource(R.drawable.default_user);
+                    }
+                });
             }
         }
         startFilling st = new startFilling();
@@ -172,16 +197,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        imgChanger = new Dialog(AccountActivity.this, android.R.style.Theme_Black_NoTitleBar);
         if (v.getId() == R.id.ivAccImg) {
-            imgChanger.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
-            imgChanger.setContentView(R.layout.cngaccimg);
-            imgChanger.setCancelable(true);
-            imgChanger.show();
-
-        }
-        if (v.getId() == R.id.btncngImg) {
-            imgChanger.dismiss();
             Intent intent = new Intent();
             intent.setType("image/");
             intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -193,26 +209,96 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
             }
             startActivityForResult(Intent.createChooser(intent, "select picture"), 1);
         }
-        if (v.getId() == R.id.ibCancelDialog) {
-            imgChanger.dismiss();
-            Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_SHORT).show();
+        if (v.getId() == R.id.btnsavImg) {
+            UploadnewProf();
         }
     }
 
+    //send Image to server
+    private void UploadnewProf() {
+        String uploadImage = getStringImage(bitmap);
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.put("u_id", res);
+        params.put("profile", uploadImage);
+        client.post(AccountActivity.this, getString(R.string.httpUrl) + "/updateImg.php", params, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Toast.makeText(AccountActivity.this, "Failed to upload Image", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                Toast.makeText(AccountActivity.this, "Changed Profile", Toast.LENGTH_SHORT).show();
+                SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("profPic", Getjson.JProfilePic);
+                editor.commit();
+            }
+        });
+    }
+
+
+    private String getStringImage(Bitmap bmp) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] imageByte = baos.toByteArray();
+        String encodeImage = Base64.encodeToString(imageByte, Base64.DEFAULT);
+        return encodeImage;
+    }
+
+    //getting Image from Storage
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        imgChanger.dismiss();
         if (requestCode == 1 && resultCode == RESULT_OK && data.getData() != null) {
             filePath = data.getData();
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-                Picasso.with(getApplicationContext()).load(filePath).resize(300, 240).into(ivAccImg);
+                Picasso.with(getApplicationContext()).load(filePath).resize(300, 300).into(ivAccImg, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        Bitmap imageBitmap = ((BitmapDrawable) ivAccImg.getDrawable()).getBitmap();
+                        RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(getResources(), imageBitmap);
+                        imageDrawable.setCircular(true);
+                        imageDrawable.setCornerRadius(Math.max(imageBitmap.getWidth(), imageBitmap.getHeight()) / 2.0f);
+                        ivAccImg.setImageDrawable(imageDrawable);
+                    }
+
+                    @Override
+                    public void onError() {
+                        ivAccImg.setImageResource(R.drawable.ic_home_black_24dp);
+                    }
+                });
                 btnsavImg.setVisibility(View.VISIBLE);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    //get userId
+    public void getUserId() {
+        SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
+        final String username = sp.getString("UserName", null);
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.put("username", username);
+        client.post("http://10.0.3.2/getUserID.inc.php", params, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Toast.makeText(getApplicationContext(), "Cannot Connect", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                if (responseString.contains("false") && !res.contains("null")) {
+                    Toast.makeText(getApplicationContext(), "Some error occurred", Toast.LENGTH_SHORT).show();
+                } else {
+                    res = responseString.trim();
+                }
+            }
+        });
     }
 }
 

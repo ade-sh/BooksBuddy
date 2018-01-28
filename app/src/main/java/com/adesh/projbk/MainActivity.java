@@ -45,9 +45,10 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView bkObj;
     bkCustomAdapter bkAdapter;
     int offset = 0;
-
+    Menu menu;
     EndlessRecyclerViewScrollListener scrollListener;
     LinearLayoutManager llm;
+    Boolean LoginStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,12 +135,20 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.main_menu, menu);
-
         SearchManager searchmanager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
         searchView.setSearchableInfo(searchmanager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(true);
+       /* SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
+        LoginStatus = sp.getBoolean("IsLogged", false);
+        if (LoginStatus) {
+            ImageView ivacc=new ImageView(this);
+            String prfpic=sp.getString("profPic","");
+            Picasso.with(this).load("http://10.0.3.2/"+prfpic).resize(20,20).into(ivacc);
+            menu.getItem(1).setIcon(ivacc.getDrawable());
+        }*/
         return super.onCreateOptionsMenu(menu);
     }
 
