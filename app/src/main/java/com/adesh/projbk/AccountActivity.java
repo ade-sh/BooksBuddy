@@ -170,6 +170,12 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             protected void onPostExecute(Void v) {
                 super.onPostExecute(v);
+                SharedPreferences sp = getSharedPreferences("Userdetail", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("ProfilePic", Getjson.JProfilePic);
+                editor.putString("Profilename", Getjson.JUserName);
+                editor.putString("Email", Getjson.JEmail);
+                editor.apply();
                 String arr[] = {"Username: " + Getjson.JUserName, "Phone no: " + Getjson.JPhone, "Emailid: " + Getjson.JEmail, "Password", "Location", "My Purchases", "My Orders", "Request", "Sold", "All Transactions"};
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.llaccdetail, arr);
                 lvaccdetail.setAdapter(adapter);

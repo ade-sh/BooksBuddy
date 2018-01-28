@@ -4,12 +4,17 @@ import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,8 +26,15 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -46,9 +58,11 @@ public class MainActivity extends AppCompatActivity {
     bkCustomAdapter bkAdapter;
     int offset = 0;
     Menu menu;
+    boolean LoginStatus;
+    ImageView ivNavPp;
+    TextView navUsr, navEmail;
     EndlessRecyclerViewScrollListener scrollListener;
     LinearLayoutManager llm;
-    Boolean LoginStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         arrRatin = new ArrayList<>();
         arrurls = new ArrayList<>();
         arruploader = new ArrayList<>();
+
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_widget);
@@ -84,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 offset = offset + page;
                 refreshState();
+                Toast.makeText(getApplicationContext(), "Load more", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -116,11 +132,45 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+        SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
+        LoginStatus = sp.getBoolean("IsLogged", false);
+        View hView = navigationView.getHeaderView(0);
+        navUsr = (TextView) hView.findViewById(R.id.tvnavUsrname);
+        navEmail = (TextView) hView.findViewById(R.id.tvnavEmail);
+        ivNavPp = (ImageView) hView.findViewById(R.id.ivNavPic);
+        if (LoginStatus) {
+            SharedPreferences spd = getSharedPreferences("Userdetail", MODE_PRIVATE);
+            String spEmail = spd.getString("Email", "Email");
+            String spusrname = spd.getString("Profilename", "Username");
+            String spProfilep = spd.getString("ProfilePic", "");
+            navUsr.setText(spusrname);
+            navEmail.setText(spEmail);
+            Picasso.with(MainActivity.this).load("http://10.0.3.2/" + spProfilep).resize(180, 180).into(ivNavPp, new Callback() {
+                @Override
+                public void onSuccess() {
+                    Bitmap imageBitmap = ((BitmapDrawable) ivNavPp.getDrawable()).getBitmap();
+                    RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(getResources(), imageBitmap);
+                    imageDrawable.setCircular(true);
+                    imageDrawable.setCornerRadius(Math.max(imageBitmap.getWidth(), imageBitmap.getHeight()) / 2.0f);
+                    ivNavPp.setImageDrawable(imageDrawable);
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
+        }
+        if (!LoginStatus) {
+            navUsr.setText("Username");
+            navEmail.setText("Email");
+        }
         getURLs();
     }
 
     private void refreshState() {
         getURLs();
+        bkAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -163,7 +213,8 @@ public class MainActivity extends AppCompatActivity {
                 onSearchRequested();
             }
             case R.id.m_refresh: {
-                getURLs();
+                bkAdapter.notifyDataSetChanged();
+                scrollListener.resetState();
             }
         }
         return super.onOptionsItemSelected(item);
@@ -176,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
             URL url = new URL(getString(R.string.httpUrl) + "/getImages.inc.php");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setDoInput(true);
-            con.setConnectTimeout(4000);
+            con.setConnectTimeout(60000);
             con.setRequestMethod("POST");
             con.connect();
             Uri.Builder builder = new Uri.Builder().appendQueryParameter("Offset", offset + "");
@@ -200,9 +251,8 @@ public class MainActivity extends AppCompatActivity {
             while ((json = bufferedReader.readLine()) != null) {
                 sb.append(json + "\n");
             }
-
+                Log.i("getJson in ma", sb.toString());
             getjsonobj = new Getjson(sb.toString().trim());
-
             getImages();
             }
         } catch (Exception e) {
@@ -225,14 +275,12 @@ public class MainActivity extends AppCompatActivity {
             protected void onPostExecute(Void v) {
                 super.onPostExecute(v);
                 loading.dismiss();
-                Log.i("getImages", Getjson.arrname.get(Getjson.arrname.size() - 1));
                 arrname.add(Getjson.arrname.get(Getjson.arrname.size() - 1));
                 arrid.add(Getjson.arrid.get(Getjson.arrid.size() - 1));
                 arrurls.add(Getjson.arrurls.get(Getjson.arrurls.size() - 1));
                 arrRatin.add(Getjson.arrRatin.get(Getjson.arrRatin.size() - 1));
                 arruploader.add(Getjson.arrUploader.get(Getjson.arrRatin.size() - 1));
                 bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin, arruploader);
-                Log.i("getImages arr", arrname.get(0));
                 bkAdapter.notifyDataSetChanged();
                 scrollListener.resetState();
             }
@@ -252,6 +300,20 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         bkAdapter.notifyDataSetChanged();
         scrollListener.resetState();
+        SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
+        LoginStatus = sp.getBoolean("IsLogged", false);
+        if (!LoginStatus) {
+            navUsr.setText("Username");
+            navEmail.setText("Email");
+            ivNavPp.setImageResource(R.drawable.ic_account_circle);
+        }
+        if (LoginStatus) {
+            SharedPreferences spd = getSharedPreferences("Userdetail", MODE_PRIVATE);
+            String spEmail = spd.getString("Email", "Email");
+            String spusrname = spd.getString("Profilename", "Username");
+            navUsr.setText(spusrname);
+            navEmail.setText(spEmail);
+        }
     }
 
     @Override

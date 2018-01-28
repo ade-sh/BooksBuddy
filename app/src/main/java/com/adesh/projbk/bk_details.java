@@ -97,7 +97,7 @@ public class bk_details extends AppCompatActivity {
             URL url;
             try {
                 //setup HttpURLConnection class to send aand receive data from php and mysql
-                url = new URL("http://10.0.3.2/getBkdetail.inc.php");
+                url = new URL("https://determinately-torqu.000webhostapp.com/getBkdetail.inc.php");
                 conn = (HttpURLConnection) url.openConnection();
                 Thread.sleep(2000);
                 conn.setConnectTimeout(4000);
@@ -156,7 +156,7 @@ public class bk_details extends AppCompatActivity {
             et_bkName.setText(Getjson.arrname.get(0));
             et_bkDisk.setText(Getjson.arrDisc.get(0));
             ratingBar.setRating(Integer.parseInt(Getjson.arrRatin.get(0)));
-            Picasso.with(getApplicationContext()).load(("http://10.0.3.2" + ustr)).placeholder(R.mipmap.im_defbk).into(bk_img);
+            Picasso.with(getApplicationContext()).load(("https://10.0.3.2" + ustr)).placeholder(R.mipmap.im_defbk).into(bk_img);
 
         }
     }
