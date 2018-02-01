@@ -3,40 +3,44 @@ package com.adesh.projbk;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.laevatein.Laevatein;
+import com.laevatein.MimeType;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
-import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
 public class sellActivity extends AppCompatActivity {
     android.net.Uri filePath;
     EditText etbkName, etbkdisc, etPrice;
-    ImageView ivPreview;
     Bitmap bitmap;
     Button getImage, btnsell;
-    String result;
+    String result = "";
+    lvImagepreview rvAdapter;
+    RecyclerView lvTest;
+    LinearLayoutManager llm;
+    List<Uri> selected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,27 +60,22 @@ public class sellActivity extends AppCompatActivity {
         etPrice = (EditText) findViewById(R.id.etSell_price);
         getImage = (Button) findViewById(R.id.btn_getImage);
         btnsell = (Button) findViewById(R.id.btnSell_upload);
-        ivPreview = (ImageView) findViewById(R.id.ivPreview);
+        bitmap = Bitmap.createBitmap(340, 240, Bitmap.Config.RGB_565);
+        lvTest = (RecyclerView) findViewById(R.id.lvItems);
+        llm = new LinearLayoutManager(sellActivity.this, LinearLayoutManager.VERTICAL, false);
+
         getUserId();
         getImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                if (ContextCompat.checkSelfPermission(sellActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    //give explanation
-                    ActivityCompat.requestPermissions(sellActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                } else {
-                    ActivityCompat.requestPermissions(sellActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                }
-                startActivityForResult(Intent.createChooser(intent, "select picture"), 1);
+                Laevatein.from(sellActivity.this).choose(MimeType.of(MimeType.JPEG)).count(1, 3).forResult(1);
             }
         });
         btnsell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!result.contains("") || !result.contains("null")) {
+                //TODO:Check if selected is null
+                if (!result.contains("") || !result.contains("null") || selected.size() != 0) {
                 uploadData();
                 } else {
                     Toast.makeText(getApplicationContext(), "Some error occurred,Try again", Toast.LENGTH_SHORT).show();
@@ -89,15 +88,15 @@ public class sellActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == RESULT_OK && data.getData() != null) {
-            filePath = data.getData();
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-                Picasso.with(getApplicationContext()).load(filePath).resize(300, 240).into(ivPreview);
-                //ivPreview.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        Log.i("reqCode", requestCode + "" + resultCode);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            List<Uri> selected = Laevatein.obtainResult(data);
+            llm = new LinearLayoutManager(sellActivity.this, LinearLayoutManager.HORIZONTAL, false);
+            rvAdapter = new lvImagepreview(sellActivity.this, selected);
+            lvTest.setLayoutManager(llm);
+            lvTest.setAdapter(rvAdapter);
+            Log.i("selected", selected.get(0).toString());
+            rvAdapter.notifyDataSetChanged();
         }
     }
 
@@ -120,7 +119,6 @@ public class sellActivity extends AppCompatActivity {
             protected void onPreExecute() {
                 loading = ProgressDialog.show(sellActivity.this, "Please wait....", null, true, true);
                 String bookNam = etbkName.getText().toString();
-                Log.i("book name String", bookNam);
                 bokDisc = etbkdisc.getText().toString();
                 bookPrice = etPrice.getText().toString();
             }
@@ -128,9 +126,18 @@ public class sellActivity extends AppCompatActivity {
             @Override
             protected String doInBackground(Bitmap... params) {
                 Bitmap bitmap = params[0];
-                String uploadImage = getStringImage(bitmap);
+
                 HashMap<String, String> data = new HashMap<>();
-                data.put("image", uploadImage);
+
+                for (int i = 0; i <= selected.size(); i++) {
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selected.get(i));
+                        String uploadImage = getStringImage(bitmap);
+                        data.put("image" + i + 1, uploadImage);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
                 data.put("bookName", bookNam);
                 data.put("bookDisc", bokDisc);
                 data.put("price", bookPrice);

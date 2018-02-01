@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="464dp"
         android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
         android:ems="10"
@@ -30,6 +31,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="7dp"
         android:ems="10"
         android:hint="Discription"
@@ -45,6 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="261dp"
         android:text="Sell"
         android:textColor="@color/cardview_dark_background"
@@ -58,6 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="141dp"
         android:layout_marginLeft="7dp"
+        android:layout_marginStart="7dp"
         android:layout_marginTop="8dp"
         android:text="Image"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -71,6 +75,7 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="10dp"
         android:ems="10"
         android:hint="price"
@@ -82,18 +87,33 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etSell_bkDisc" />
 
-    <ImageView
-        android:id="@+id/ivPreview"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_below="@+id/etSell_price"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="32dp"
-        app:layout_constraintHorizontal_bias="0.0"
+    <LinearLayout
+        android:layout_width="368dp"
+        android:layout_height="171dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        android:visibility="visible"
+        android:weightSum="1"
+        app:layout_constraintBottom_toTopOf="@+id/btnSell_upload"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etSell_price"
-        app:srcCompat="@color/transparent" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_getImage"
+        app:layout_constraintVertical_bias="0.486">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/lvItems"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.95"
+            android:backgroundTint="@drawable/common_google_signin_btn_icon_light_normal_background"
+            android:divider="@color/transparent"
+            android:dividerHeight="6dp"
+            android:drawSelectorOnTop="false"
+            tools:context=".sellActivity"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="8dp" />
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

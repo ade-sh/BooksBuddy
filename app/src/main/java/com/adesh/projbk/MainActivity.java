@@ -98,14 +98,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 offset = offset + page;
-                refreshState();
+                getURLs();
+                bkAdapter.notifyDataSetChanged();
+                bkAdapter.notifyItemInserted(totalItemsCount + 1);
                 Toast.makeText(getApplicationContext(), "Load more", Toast.LENGTH_SHORT).show();
             }
-
             @Override
             public void onScrolled(RecyclerView view, int dx, int dy) {
                 super.onScrolled(view, dx, dy);
-
             }
         };
         bkObj.addOnScrollListener(scrollListener);
@@ -168,11 +168,6 @@ public class MainActivity extends AppCompatActivity {
         getURLs();
     }
 
-    private void refreshState() {
-        getURLs();
-        bkAdapter.notifyDataSetChanged();
-    }
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -196,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
         if (LoginStatus) {
             ImageView ivacc=new ImageView(this);
             String prfpic=sp.getString("profPic","");
-            Picasso.with(this).load("http://10.0.3.2/"+prfpic).resize(20,20).into(ivacc);
+            Picasso.with(this).load("http://10.0.2.2/"+prfpic).resize(20,20).into(ivacc);
             menu.getItem(1).setIcon(ivacc.getDrawable());
         }*/
         return super.onCreateOptionsMenu(menu);
