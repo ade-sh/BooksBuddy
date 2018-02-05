@@ -12,6 +12,8 @@ import java.util.ArrayList;
 public class Getjson {
     public static final String JSON_ARRAY = "result";
     public static final String IMAGEURL = "ImagePath";
+    public static final String IMAGEURL2 = "ImagePath2";
+    public static final String IMAGEURL3 = "ImagePath3";
     public static final String BookName = "bookName";
     public static final String B_id = "b_id";
     public static ArrayList<String> arrname;
@@ -19,6 +21,8 @@ public class Getjson {
     public static ArrayList<String> arrRatin;
     public static ArrayList<String> arrUploader;
     public static ArrayList<String> arrurls;
+    public static ArrayList<String> arrurls2;
+    public static ArrayList<String> arrurls3;
     public static ArrayList<String> arrDisc;
     public static int[] Img_Ratin;
     public static String JUserName = "";
@@ -58,6 +62,8 @@ public class Getjson {
             arrname = new ArrayList<>();
             arrRatin = new ArrayList<>();
             arrurls = new ArrayList<>();
+            arrurls2 = new ArrayList<>();
+            arrurls3 = new ArrayList<>();
             arrDisc = new ArrayList<>();
             arrUploader = new ArrayList<>();
 
@@ -65,6 +71,8 @@ public class Getjson {
                 //inserting into Arraylist
                 arrname.add(urls.getJSONObject(i).getString(BookName));
                 arrurls.add(urls.getJSONObject(i).getString(IMAGEURL));
+                arrurls2.add(urls.getJSONObject(i).getString(IMAGEURL2));
+                arrurls3.add(urls.getJSONObject(i).getString(IMAGEURL3));
                 arrRatin.add(urls.getJSONObject(i).getString("Rating"));
                 arrid.add(urls.getJSONObject(i).getString(B_id));
                 arrDisc.add(urls.getJSONObject(i).getString("b_disc"));

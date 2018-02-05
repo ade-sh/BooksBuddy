@@ -60,6 +60,30 @@
                 android:editable="false"
             android:text="@string/title_main" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="171dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                android:visibility="visible"
+                android:weightSum="1">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/lvdetailItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.95"
+                    android:divider="@color/transparent"
+                    android:dividerHeight="6dp"
+                    android:drawSelectorOnTop="false"
+                    tools:context=".sellActivity"
+                    tools:layout_editor_absoluteX="8dp"
+                    tools:layout_editor_absoluteY="8dp" />
+            </LinearLayout>
+
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -70,6 +94,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </ScrollView>
+
+
         </LinearLayout>
 
     </FrameLayout>

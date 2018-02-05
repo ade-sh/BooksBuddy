@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +28,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -35,6 +38,7 @@ public class bk_details extends AppCompatActivity {
     ImageView bk_img;
     Button btnBuy;
     RatingBar ratingBar;
+    RecyclerView rvAllimg;
     private TextView mTextMessage, et_bkName, et_bkDisk;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -67,6 +71,7 @@ public class bk_details extends AppCompatActivity {
         et_bkDisk = (TextView) findViewById(R.id.tv_deatils);
         bk_img = (ImageView) findViewById(R.id.iv_bkImg);
         ratingBar = (RatingBar) findViewById(R.id.rb_bkRating);
+        rvAllimg = (RecyclerView) findViewById(R.id.lvdetailItems);
         Intent intent = getIntent();
         String sPos = intent.getStringExtra("bkPos");
        /* int pos=Integer.parseInt(sPos);*/
@@ -82,11 +87,12 @@ public class bk_details extends AppCompatActivity {
         String Img_id;
 
         fillData(String Img_id) {
-            this.Img_id = Img_id;
+            this.Img_id = Img_id.trim();
         }
 
         @Override
         protected void onPreExecute() {
+            Log.i("Img_Id", Img_id);
             super.onPreExecute();
 
         }
@@ -97,7 +103,7 @@ public class bk_details extends AppCompatActivity {
             URL url;
             try {
                 //setup HttpURLConnection class to send aand receive data from php and mysql
-                url = new URL("https://determinately-torqu.000webhostapp.com/getBkdetail.inc.php");
+                url = new URL(getString(R.string.httpUrl) + "/getBkdetail.inc.php");
                 conn = (HttpURLConnection) url.openConnection();
                 Thread.sleep(2000);
                 conn.setConnectTimeout(4000);
@@ -156,7 +162,13 @@ public class bk_details extends AppCompatActivity {
             et_bkName.setText(Getjson.arrname.get(0));
             et_bkDisk.setText(Getjson.arrDisc.get(0));
             ratingBar.setRating(Integer.parseInt(Getjson.arrRatin.get(0)));
-            Picasso.with(getApplicationContext()).load(("https://10.0.3.2" + ustr)).placeholder(R.mipmap.im_defbk).into(bk_img);
+            LinearLayoutManager llm = new LinearLayoutManager(bk_details.this, LinearLayoutManager.HORIZONTAL, false);
+            Picasso.with(getApplicationContext()).load(("http://10.0.3.2" + ustr)).placeholder(R.mipmap.im_defbk).into(bk_img);
+            ArrayList lvUrls = new ArrayList();
+            lvUrls.add(Getjson.arrurls.get(0));// lvUrls.add(Getjson.arrurls2.get(0)); lvUrls.add(Getjson.arrurls3.get(0));
+            rvImageView rvAdapter = new rvImageView(bk_details.this, lvUrls);
+            rvAllimg.setLayoutManager(llm);
+            rvAllimg.setAdapter(rvAdapter);
 
         }
     }
