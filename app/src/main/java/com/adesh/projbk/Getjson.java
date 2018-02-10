@@ -15,6 +15,12 @@ public class Getjson {
     public static final String IMAGEURL2 = "ImagePath2";
     public static final String IMAGEURL3 = "ImagePath3";
     public static final String BookName = "bookName";
+    public static final String ReqName = "RequestName";
+    public static final String ReqId = "RequestId";
+    public static final String ReqDisc = "RequestDisc";
+    public static final String ReqImg1 = "RqImg1";
+    public static final String ReqImg2 = "RqImg2";
+    public static final String ReqImg3 = "RqImg3";
     public static final String B_id = "b_id";
     public static ArrayList<String> arrname;
     public static ArrayList<String> arrid;
@@ -24,7 +30,6 @@ public class Getjson {
     public static ArrayList<String> arrurls2;
     public static ArrayList<String> arrurls3;
     public static ArrayList<String> arrDisc;
-    public static int[] Img_Ratin;
     public static String JUserName = "";
     public static String JEmail = "";
     public static String JProfilePic = "";
@@ -38,7 +43,6 @@ public class Getjson {
         try {
             JSONObject jsonObject = new JSONObject(json);
             urls = jsonObject.getJSONArray(JSON_ARRAY);
-            Log.i("GetJson", urls.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -66,9 +70,10 @@ public class Getjson {
             arrurls3 = new ArrayList<>();
             arrDisc = new ArrayList<>();
             arrUploader = new ArrayList<>();
-
+            Log.i("urls Length", urls.length() + "");
             for (int i = 0; i < urls.length(); i++) {
                 //inserting into Arraylist
+                Log.e("arrname in Loop", urls.getJSONObject(i).getString(BookName));
                 arrname.add(urls.getJSONObject(i).getString(BookName));
                 arrurls.add(urls.getJSONObject(i).getString(IMAGEURL));
                 arrurls2.add(urls.getJSONObject(i).getString(IMAGEURL2));

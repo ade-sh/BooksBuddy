@@ -13,7 +13,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-
+//Adapter for sell preview image viewer
 public class lvImagepreview extends RecyclerView.Adapter<lvImagepreview.ViewHolder> {
     Bitmap bitmap;
     Context context1;

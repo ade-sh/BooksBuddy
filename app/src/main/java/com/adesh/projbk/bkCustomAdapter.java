@@ -53,6 +53,11 @@ public class bkCustomAdapter extends RecyclerView.Adapter<bkCustomAdapter.ViewHo
             viewHolder.Uploader.setVisibility(View.VISIBLE);
             viewHolder.Uploader.setText("By User");
         }
+        if (arrUploader.get(position).contains("Request")) {
+            viewHolder.rate.setVisibility(View.GONE);
+            viewHolder.Uploader.setVisibility(View.VISIBLE);
+            viewHolder.Uploader.setText("Request");
+        }
         viewHolder.Title.setText(arrBook.get(position));
         viewHolder.img.setTag(arrId.get(position));
         viewHolder.rate.setRating(Integer.parseInt(arrRatin.get(position)));
@@ -67,6 +72,7 @@ public class bkCustomAdapter extends RecyclerView.Adapter<bkCustomAdapter.ViewHo
                 //Pair<View, String> pair2 = Pair.create(viewHolder.findViewById(R.id.ratingBar), ViewCompat.getTransitionName(viewHolder.findViewById(R.id.ratingBar)));
                 // ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this, pair1, pair2);
                 intent.putExtra("bkPos", arrId.get(position));
+                intent.putExtra("Type", arrUploader.get(position));
                 context1.startActivity(intent);
             }
         });

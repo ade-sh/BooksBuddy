@@ -28,7 +28,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:layout_weight="1"
-                android:animateLayoutChanges="true"
                 android:background="@android:color/holo_red_dark"
                 android:elevation="4dp"
                 android:minHeight="?attr/actionBarSize"

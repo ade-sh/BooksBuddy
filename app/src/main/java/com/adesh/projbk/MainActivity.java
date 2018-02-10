@@ -1,6 +1,5 @@
 package com.adesh.projbk;
 
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -90,17 +89,12 @@ public class MainActivity extends AppCompatActivity {
         toggle.setDrawerIndicatorEnabled(true);
         toggle.syncState();
         llm = new LinearLayoutManager(this);
-
-        bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin, arruploader);
-        bkObj.setAdapter(bkAdapter);
         bkObj.setLayoutManager(llm);
         scrollListener = new EndlessRecyclerViewScrollListener(llm) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 offset = offset + page;
                 getURLs();
-                bkAdapter.notifyDataSetChanged();
-                bkAdapter.notifyItemInserted(totalItemsCount + 1);
                 Toast.makeText(getApplicationContext(), "Load more", Toast.LENGTH_SHORT).show();
             }
             @Override
@@ -126,7 +120,10 @@ public class MainActivity extends AppCompatActivity {
                     Intent Startsell = new Intent(getApplicationContext(), sellActivity.class);
                     startActivity(Startsell);
                 }
-
+                if (id == R.id.nav_request) {
+                    Intent startReq = new Intent(MainActivity.this, Request.class);
+                    startActivity(startReq);
+                }
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
@@ -208,8 +205,11 @@ public class MainActivity extends AppCompatActivity {
                 onSearchRequested();
             }
             case R.id.m_refresh: {
-                bkAdapter.notifyDataSetChanged();
+                bkObj.invalidate();
                 scrollListener.resetState();
+                offset = offset + 1;
+                getURLs();
+                bkAdapter.notifyDataSetChanged();
             }
         }
         return super.onOptionsItemSelected(item);
@@ -258,18 +258,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void getImages() {
         class GetImages extends AsyncTask<Void, Void, Void> {
-            ProgressDialog loading;
 
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                loading = ProgressDialog.show(MainActivity.this, "Loading Menu", "Please wait...", false, false);
             }
 
             @Override
             protected void onPostExecute(Void v) {
                 super.onPostExecute(v);
-                loading.dismiss();
                 arrname.add(Getjson.arrname.get(Getjson.arrname.size() - 1));
                 arrid.add(Getjson.arrid.get(Getjson.arrid.size() - 1));
                 arrurls.add(Getjson.arrurls.get(Getjson.arrurls.size() - 1));
@@ -277,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
                 arruploader.add(Getjson.arrUploader.get(Getjson.arrRatin.size() - 1));
                 bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin, arruploader);
                 bkAdapter.notifyDataSetChanged();
-                scrollListener.resetState();
+                bkObj.setAdapter(bkAdapter);
             }
 
             @Override
@@ -288,12 +285,12 @@ public class MainActivity extends AppCompatActivity {
         }
         GetImages getImages = new GetImages();
         getImages.execute();
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        bkAdapter.notifyDataSetChanged();
         scrollListener.resetState();
         SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
         LoginStatus = sp.getBoolean("IsLogged", false);
@@ -315,7 +312,6 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         scrollListener.resetState();
-        bkAdapter.notifyDataSetChanged();
     }
 
     @Override

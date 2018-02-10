@@ -14,6 +14,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+//Adapter For detail image viewer
 public class rvImageView extends RecyclerView.Adapter<rvImageView.ViewHolder> {
     Bitmap bitmap;
     Context context1;
@@ -40,11 +41,19 @@ public class rvImageView extends RecyclerView.Adapter<rvImageView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(rvImageView.ViewHolder holder, int position) {
-        if (!selected.get(position).isEmpty() || selected != null || !selected.contains("null")) {
-            Log.i("selected", selected.get(position));
-            String ustr = selected.get(position).substring(15);
-            Log.i("imView", ustr);
-            Picasso.with(context1).load("http://10.0.3.2" + ustr).placeholder(R.drawable.default_user).into(holder.img);
+        //check if image is null
+        if (!selected.get(position).isEmpty() || selected != null || !selected.get(position).contains("null")) {
+
+            if ((selected.get(position)).trim().length() != 4) {
+                {
+                    if ((selected.get(position)).trim().length() != 0) {
+                        Log.i("selected", "" + selected.get(position).length());
+                        String ustr = selected.get(position).substring(15);
+                        Log.i("imView", ustr);
+                        Picasso.with(context1).load("http://10.0.3.2" + ustr).placeholder(R.drawable.default_user).into(holder.img);
+                    }
+        }
+            }
         }
     }
 

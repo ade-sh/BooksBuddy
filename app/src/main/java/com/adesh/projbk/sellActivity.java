@@ -74,13 +74,13 @@ public class sellActivity extends AppCompatActivity {
         getImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Laevatein.from(sellActivity.this).choose(MimeType.of(MimeType.JPEG)).count(1, 3).forResult(1);
+                Laevatein.from(sellActivity.this).choose(MimeType.of(MimeType.JPEG)).resume(selected).count(1, 3).forResult(1);
             }
         });
         btnsell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO:Check if selected is null
+
                 if (!result.contains("") || !result.contains("null") || selected.size() != 0 || !result.contains("0")) {
                 uploadData();
                 } else {

@@ -74,20 +74,22 @@ public class bk_details extends AppCompatActivity {
         rvAllimg = (RecyclerView) findViewById(R.id.lvdetailItems);
         Intent intent = getIntent();
         String sPos = intent.getStringExtra("bkPos");
-       /* int pos=Integer.parseInt(sPos);*/
+        String upType = intent.getStringExtra("Type");
         et_bkName.setText(sPos);
         et_bkDisk.setText("");
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        fillData startFill = new fillData(sPos);
+        fillData startFill = new fillData(sPos, upType);
         startFill.execute();
     }
 
     public class fillData extends AsyncTask<Object, Object, String> {
         String Img_id;
+        String upType;
 
-        fillData(String Img_id) {
+        fillData(String Img_id, String upType) {
             this.Img_id = Img_id.trim();
+            this.upType = upType.trim();
         }
 
         @Override
@@ -113,7 +115,8 @@ public class bk_details extends AppCompatActivity {
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
                 //Appends parameters to URL
-                Uri.Builder builder = new Uri.Builder().appendQueryParameter("bid", Img_id);
+                Log.i("uptype", upType);
+                Uri.Builder builder = new Uri.Builder().appendQueryParameter("bid", Img_id).appendQueryParameter("Uploader", upType);
                 String query = builder.build().getEncodedQuery();
 
                 //Open Connection for sending data
@@ -156,16 +159,24 @@ public class bk_details extends AppCompatActivity {
         protected void onPostExecute(String result) {
             String ustr = Getjson.arrurls.get(0).substring(15);
             Log.i("ustr", ustr);
-            if (Getjson.arrUploader.get(0).contains("user")) {
+            if (Getjson.arrUploader.get(0).contains("user") || Getjson.arrUploader.get(0).contains("Request")) {
                 ratingBar.setVisibility(View.GONE);
             }
+
             et_bkName.setText(Getjson.arrname.get(0));
             et_bkDisk.setText(Getjson.arrDisc.get(0));
             ratingBar.setRating(Integer.parseInt(Getjson.arrRatin.get(0)));
             LinearLayoutManager llm = new LinearLayoutManager(bk_details.this, LinearLayoutManager.HORIZONTAL, false);
             Picasso.with(getApplicationContext()).load(("http://10.0.3.2" + ustr)).placeholder(R.mipmap.im_defbk).into(bk_img);
             ArrayList lvUrls = new ArrayList();
-            lvUrls.add(Getjson.arrurls.get(0));// lvUrls.add(Getjson.arrurls2.get(0)); lvUrls.add(Getjson.arrurls3.get(0));
+
+            lvUrls.add(Getjson.arrurls.get(0));
+            if (Getjson.arrurls2.get(0) != null && Getjson.arrurls2.get(0).length() != 4 && Getjson.arrurls2.get(0).isEmpty() && Getjson.arrurls2.get(0).length() != 0) {
+                lvUrls.add(Getjson.arrurls2.get(0));
+            }
+            if (Getjson.arrurls3.get(0) != null && Getjson.arrurls3.get(0).length() != 4 && Getjson.arrurls3.get(0).isEmpty() && Getjson.arrurls3.get(0).length() != 0) {
+                lvUrls.add(Getjson.arrurls3.get(0));
+            }
             rvImageView rvAdapter = new rvImageView(bk_details.this, lvUrls);
             rvAllimg.setLayoutManager(llm);
             rvAllimg.setAdapter(rvAdapter);
