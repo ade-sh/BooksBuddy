@@ -2,6 +2,7 @@ package com.adesh.projbk;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +37,6 @@ public class bkCustomAdapter extends RecyclerView.Adapter<bkCustomAdapter.ViewHo
     private Context getContext() {
         return context1;
     }
-
     @Override
     public bkCustomAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
@@ -48,20 +48,22 @@ public class bkCustomAdapter extends RecyclerView.Adapter<bkCustomAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(bkCustomAdapter.ViewHolder viewHolder, final int position) {
-        if (arrUploader.get(position).contains("user")) {
+        if (arrUploader.get(viewHolder.getAdapterPosition()).contains("user")) {
             viewHolder.rate.setVisibility(View.GONE);
             viewHolder.Uploader.setVisibility(View.VISIBLE);
             viewHolder.Uploader.setText("By User");
-        }
-        if (arrUploader.get(position).contains("Request")) {
+        } else if (arrUploader.get(viewHolder.getAdapterPosition()).contains("Request")) {
             viewHolder.rate.setVisibility(View.GONE);
             viewHolder.Uploader.setVisibility(View.VISIBLE);
             viewHolder.Uploader.setText("Request");
+            viewHolder.Uploader.setBackgroundColor(Color.CYAN);
+        } else {
+            viewHolder.Uploader.setVisibility(View.GONE);
         }
-        viewHolder.Title.setText(arrBook.get(position));
-        viewHolder.img.setTag(arrId.get(position));
-        viewHolder.rate.setRating(Integer.parseInt(arrRatin.get(position)));
-        String ustr = arrUrl.get(position).substring(15);
+        viewHolder.Title.setText(arrBook.get(viewHolder.getAdapterPosition()));
+        viewHolder.img.setTag(arrId.get(viewHolder.getAdapterPosition()));
+        viewHolder.rate.setRating(Integer.parseInt(arrRatin.get(viewHolder.getAdapterPosition())));
+        String ustr = arrUrl.get(viewHolder.getAdapterPosition()).substring(15);
         Picasso.with(context1).load(("http://10.0.3.2" + ustr)).placeholder(R.mipmap.im_defbk).resize(450, 235).into(viewHolder.img);
         viewHolder.layout.setOnClickListener(new View.OnClickListener() {
             @Override

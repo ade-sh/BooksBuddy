@@ -115,7 +115,6 @@ public class bk_details extends AppCompatActivity {
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
                 //Appends parameters to URL
-                Log.i("uptype", upType);
                 Uri.Builder builder = new Uri.Builder().appendQueryParameter("bid", Img_id).appendQueryParameter("Uploader", upType);
                 String query = builder.build().getEncodedQuery();
 
@@ -162,7 +161,9 @@ public class bk_details extends AppCompatActivity {
             if (Getjson.arrUploader.get(0).contains("user") || Getjson.arrUploader.get(0).contains("Request")) {
                 ratingBar.setVisibility(View.GONE);
             }
-
+            if (Getjson.arrUploader.get(0).contains("Request")) {
+                btnBuy.setVisibility(View.GONE);
+            }
             et_bkName.setText(Getjson.arrname.get(0));
             et_bkDisk.setText(Getjson.arrDisc.get(0));
             ratingBar.setRating(Integer.parseInt(Getjson.arrRatin.get(0)));
@@ -184,5 +185,3 @@ public class bk_details extends AppCompatActivity {
         }
     }
 }
-
-

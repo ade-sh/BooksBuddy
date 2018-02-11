@@ -158,6 +158,7 @@ public class sellActivity extends AppCompatActivity {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("u_id", result);
+        params.put("type", "sell");
         client.post("http://10.0.3.2/getBkid.inc.php", params, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
@@ -168,6 +169,7 @@ public class sellActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
                 Intent intent = new Intent(sellActivity.this, bk_details.class);
                 intent.putExtra("bkPos", responseString.trim());
+                intent.putExtra("Type", "sell");
                 Log.e("resoString", responseString);
                 pd.setVisibility(View.GONE);
                 startActivity(intent);

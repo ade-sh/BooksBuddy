@@ -88,12 +88,33 @@ public class Request extends AppCompatActivity implements View.OnClickListener {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, String responseString) {
                         prg.setVisibility(View.GONE);
-                        Toast.makeText(Request.this, responseString, Toast.LENGTH_SHORT).show();
-                        Log.i("request code in req", responseString);
+                        startBkdetil();
                     }
                 });
             }
         }
+    }
+
+    private void startBkdetil() {
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.put("u_id", Uid);
+        params.put("type", "request");
+        client.post("http://10.0.3.2/getBkid.inc.php", params, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Toast.makeText(getApplicationContext(), "Cannot Connect", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                Intent intent = new Intent(Request.this, bk_details.class);
+                intent.putExtra("bkPos", responseString.trim());
+                intent.putExtra("Type", "Request");
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     @Override

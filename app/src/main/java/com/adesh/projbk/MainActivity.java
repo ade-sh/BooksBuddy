@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     TextView navUsr, navEmail;
     EndlessRecyclerViewScrollListener scrollListener;
     LinearLayoutManager llm;
-
+    private Parcelable recyclerViewState;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -90,12 +91,27 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
         llm = new LinearLayoutManager(this);
         bkObj.setLayoutManager(llm);
+        bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin, arruploader);
+        bkObj.setAdapter(bkAdapter);
+        getURLs();
         scrollListener = new EndlessRecyclerViewScrollListener(llm) {
             @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                offset = offset + page;
-                getURLs();
-                Toast.makeText(getApplicationContext(), "Load more", Toast.LENGTH_SHORT).show();
+            public void onLoadMore(final int page, int totalItemsCount, RecyclerView view) {
+                bkObj.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        offset = page;
+                        int fsize = arrname.size();
+                        getURLs();
+                        Toast.makeText(getApplicationContext(), "Load more " + page, Toast.LENGTH_SHORT).show();
+                        try {
+                            Thread.sleep(1000);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        bkAdapter.notifyItemRangeInserted(fsize, 2);
+                    }
+                });
             }
             @Override
             public void onScrolled(RecyclerView view, int dx, int dy) {
@@ -162,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
             navUsr.setText("Username");
             navEmail.setText("Email");
         }
-        getURLs();
     }
 
     @Override
@@ -216,7 +231,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getURLs() {
-
+        Toast.makeText(MainActivity.this, "get Urls called " + offset, Toast.LENGTH_SHORT).show();
+        recyclerViewState = bkObj.getLayoutManager().onSaveInstanceState();
         BufferedReader bufferedReader = null;
         try {
             URL url = new URL(getString(R.string.httpUrl) + "/getImages.inc.php");
@@ -267,14 +283,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Void v) {
                 super.onPostExecute(v);
+
+                if (Getjson.arrname.size() != 0) {
                 arrname.add(Getjson.arrname.get(Getjson.arrname.size() - 1));
                 arrid.add(Getjson.arrid.get(Getjson.arrid.size() - 1));
                 arrurls.add(Getjson.arrurls.get(Getjson.arrurls.size() - 1));
                 arrRatin.add(Getjson.arrRatin.get(Getjson.arrRatin.size() - 1));
                 arruploader.add(Getjson.arrUploader.get(Getjson.arrRatin.size() - 1));
                 bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin, arruploader);
-                bkAdapter.notifyDataSetChanged();
-                bkObj.setAdapter(bkAdapter);
+                    bkObj.setAdapter(bkAdapter);
+                    bkObj.getLayoutManager().onRestoreInstanceState(recyclerViewState);
+
+                } else {
+                    Toast.makeText(MainActivity.this, "array size 0", Toast.LENGTH_LONG).show();
+                    for (int i = 0; i < arrname.size(); i++) {
+                        Log.d("arrname after 0", arrname.get(i));
+                    }
+                }
             }
 
             @Override
@@ -285,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
         }
         GetImages getImages = new GetImages();
         getImages.execute();
-
+        bkObj.getAdapter().notifyDataSetChanged();
     }
 
     @Override
