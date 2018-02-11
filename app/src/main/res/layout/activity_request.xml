@@ -50,7 +50,7 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvReqestImg"
-            android:layout_width="247dp"
+            android:layout_width="532dp"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"

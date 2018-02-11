@@ -56,6 +56,9 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
     android.net.Uri filePath;
     String res;
     Bitmap bitmap;
+    String username;
+    String Password;
+    String uid;
     uploadRequestHandler urc = new uploadRequestHandler();
 
     @Override
@@ -103,15 +106,17 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
     //Set User Data
     public void startFill() {
         class startFilling extends AsyncTask<Void, Void, Void> {
-            String username;
-            String Password;
 
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
+                if (username == null) {
                 SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
                 username = sp.getString("UserName", null);
                 Password = sp.getString("Password", null);
+                    uid = sp.getString("Uid", null);
+                    Toast.makeText(AccountActivity.this, uid, Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -130,7 +135,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
                     conn.setDoInput(true);
                     conn.setDoOutput(true);
                     //Appends parameters to URL
-                    Uri.Builder builder = new Uri.Builder().appendQueryParameter("email", username).appendQueryParameter("password", Password);
+                    Uri.Builder builder = new Uri.Builder().appendQueryParameter("email", username);
                     String query = builder.build().getEncodedQuery();
 
                     //Open Connection for sending data

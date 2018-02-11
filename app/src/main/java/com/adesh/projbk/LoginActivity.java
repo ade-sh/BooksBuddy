@@ -26,6 +26,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
@@ -277,6 +278,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         @Override
+        protected void onPreExecute() {
+            AsyncHttpClient client = new AsyncHttpClient();
+            RequestParams params = new RequestParams();
+            params.put("username", mEmail);
+            client.post("http://10.0.3.2/getUserID.inc.php", params, new TextHttpResponseHandler() {
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+                }
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                    Toast.makeText(LoginActivity.this, "Connection made", Toast.LENGTH_SHORT).show();
+                    Uid = responseString.trim();
+                }
+            });
+        }
+        @Override
         protected String doInBackground(Object... params) {
             HttpURLConnection conn;
             URL url;
@@ -335,21 +354,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
             Log.i("result in Login", result);
             if (result.contains("true")) {
-
-                AsyncHttpClient client = new AsyncHttpClient();
-                RequestParams params = new RequestParams();
-                params.put("username", mEmail);
-                client.post("http://10.0.3.2/getUserID.inc.php", params, new TextHttpResponseHandler() {
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-
-                    }
-
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                        Uid = responseString;
-                    }
-                });
                 SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putString("UserName", mEmail);

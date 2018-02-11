@@ -15,6 +15,7 @@ public class Getjson {
     public static final String IMAGEURL2 = "ImagePath2";
     public static final String IMAGEURL3 = "ImagePath3";
     public static final String BookName = "bookName";
+    public static final String Usr_id = "u_id";
     public static final String ReqName = "RequestName";
     public static final String ReqId = "RequestId";
     public static final String ReqDisc = "RequestDisc";
@@ -30,6 +31,7 @@ public class Getjson {
     public static ArrayList<String> arrurls2;
     public static ArrayList<String> arrurls3;
     public static ArrayList<String> arrDisc;
+    public static ArrayList<String> arruid;
     public static String JUserName = "";
     public static String JEmail = "";
     public static String JProfilePic = "";
@@ -70,6 +72,7 @@ public class Getjson {
             arrurls3 = new ArrayList<>();
             arrDisc = new ArrayList<>();
             arrUploader = new ArrayList<>();
+            arruid = new ArrayList<>();
             Log.i("urls Length", urls.length() + "");
             for (int i = 0; i < urls.length(); i++) {
                 //inserting into Arraylist
@@ -82,6 +85,7 @@ public class Getjson {
                 arrid.add(urls.getJSONObject(i).getString(B_id));
                 arrDisc.add(urls.getJSONObject(i).getString("b_disc"));
                 arrUploader.add(urls.getJSONObject(i).getString("uploader"));
+                arruid.add(urls.getJSONObject(i).getString(Usr_id));
             }
         } catch (JSONException e) {
             e.printStackTrace();

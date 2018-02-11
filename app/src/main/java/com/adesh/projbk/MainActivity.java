@@ -103,9 +103,8 @@ public class MainActivity extends AppCompatActivity {
                         offset = page;
                         int fsize = arrname.size();
                         getURLs();
-                        Toast.makeText(getApplicationContext(), "Load more " + page, Toast.LENGTH_SHORT).show();
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(500);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -231,7 +230,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getURLs() {
-        Toast.makeText(MainActivity.this, "get Urls called " + offset, Toast.LENGTH_SHORT).show();
         recyclerViewState = bkObj.getLayoutManager().onSaveInstanceState();
         BufferedReader bufferedReader = null;
         try {

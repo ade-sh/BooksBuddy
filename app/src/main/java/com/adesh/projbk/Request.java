@@ -55,6 +55,7 @@ public class Request extends AppCompatActivity implements View.OnClickListener {
             finish();
         }
         Uid = sp.getString("Uid", "");
+        getUserId();
         et_name = (EditText) findViewById(R.id.et_rqname);
         et_disc = (EditText) findViewById(R.id.et_rqDisc);
         btn_img = (Button) findViewById(R.id.btn_rqImg);
@@ -163,5 +164,28 @@ public class Request extends AppCompatActivity implements View.OnClickListener {
             return false;
         }
         return true;
+    }
+
+    public void getUserId() {
+        SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
+        final String username = sp.getString("UserName", null);
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.put("username", username);
+        client.post("http://10.0.3.2/getUserID.inc.php", params, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Toast.makeText(getApplicationContext(), "Cannot Connect", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                if (responseString.contains("false") && !responseString.contains("null")) {
+                    Toast.makeText(getApplicationContext(), "Some error occurred", Toast.LENGTH_SHORT).show();
+                } else {
+                    Uid = responseString.trim();
+                }
+            }
+        });
     }
 }
