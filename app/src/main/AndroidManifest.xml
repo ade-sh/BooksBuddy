@@ -18,7 +18,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity">
+            <meta-data
+                android:name="android.app.searchable"
+                android:value=".seaching_activity" />
+        </activity>
         <activity
             android:name=".bk_details"
             android:label="" />
@@ -45,14 +49,17 @@
         <activity android:name=".sellActivity" />
         <activity
             android:name=".SplashActivity"
+            android:launchMode="singleTop"
             android:theme="@style/SplahTheme">
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Request"></activity>
+        <activity android:name=".Request" />
+        <activity android:name=".ViewAccount"></activity>
     </application>
 
 </manifest>

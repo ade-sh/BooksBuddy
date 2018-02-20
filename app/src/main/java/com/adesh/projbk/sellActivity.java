@@ -81,11 +81,15 @@ public class sellActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (!result.contains("") || !result.contains("null") || selected.size() != 0 || !result.contains("0")) {
+                if (!result.contains("") || !result.contains("null") && selected.size() != 0 || !result.contains("0")) {
                 uploadData();
                 } else {
                     Toast.makeText(getApplicationContext(), "Some error occurred,Try again", Toast.LENGTH_SHORT).show();
                     Toast.makeText(getApplicationContext(), "result=" + result, Toast.LENGTH_SHORT).show();
+                }
+                if (selected.size() < 1) {
+                    getImage.setError("Image needed");
+                    Toast.makeText(getApplicationContext(), "At least 1 image needed" + selected.size(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -107,7 +111,6 @@ public class sellActivity extends AppCompatActivity {
                     String uploadImage = getStringImage(bitmap);
                     K = i + 1;
                     params.put("image" + K, uploadImage);
-                    datas.put("image" + K, uploadImage);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -196,6 +199,10 @@ public class sellActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Some error occurred", Toast.LENGTH_SHORT).show();
                 } else {
                     result = responseString.trim();
+                    SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString("Uid", responseString.trim());
+                    editor.apply();
                     Toast.makeText(getApplicationContext(), responseString, Toast.LENGTH_SHORT).show();
                 }
             }

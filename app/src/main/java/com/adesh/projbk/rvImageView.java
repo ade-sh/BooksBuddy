@@ -48,7 +48,7 @@ public class rvImageView extends RecyclerView.Adapter<rvImageView.ViewHolder> {
                 {
                     if ((selected.get(position)).trim().length() != 0) {
                         Log.i("selected", "" + selected.get(position).length());
-                        String ustr = selected.get(position).substring(15);
+                        String ustr = selected.get(position);
                         Log.i("imView", ustr);
                         Picasso.with(context1).load("http://10.0.3.2" + ustr).placeholder(R.drawable.default_user).into(holder.img);
                     }

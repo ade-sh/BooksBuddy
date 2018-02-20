@@ -59,7 +59,6 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
     String username;
     String Password;
     String uid;
-    uploadRequestHandler urc = new uploadRequestHandler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -307,6 +306,10 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
                     Toast.makeText(getApplicationContext(), "Some error occurred", Toast.LENGTH_SHORT).show();
                 } else {
                     res = responseString.trim();
+                    SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString("Uid", res.trim());
+                    editor.apply();
                 }
             }
         });

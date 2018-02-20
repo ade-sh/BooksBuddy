@@ -1,7 +1,5 @@
 package com.adesh.projbk;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -21,7 +19,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -42,10 +39,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import cz.msebera.android.httpclient.conn.ConnectTimeoutException;
 
 public class MainActivity extends AppCompatActivity {
     public Getjson getjsonobj;
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        bkAdapter.notifyItemRangeInserted(fsize, 2);
+                        bkAdapter.notifyItemRangeInserted(fsize, 4);
                     }
                 });
             }
@@ -193,18 +193,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        SearchManager searchmanager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        /*SearchManager searchmanager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
         searchView.setSearchableInfo(searchmanager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(true);
-       /* SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
-        LoginStatus = sp.getBoolean("IsLogged", false);
-        if (LoginStatus) {
-            ImageView ivacc=new ImageView(this);
-            String prfpic=sp.getString("profPic","");
-            Picasso.with(this).load("http://10.0.2.2/"+prfpic).resize(20,20).into(ivacc);
-            menu.getItem(1).setIcon(ivacc.getDrawable());
-        }*/
+        searchView.setIconifiedByDefault(true);*/
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -221,7 +213,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.m_refresh: {
                 bkObj.invalidate();
                 scrollListener.resetState();
-                offset = offset + 1;
+                offset = 0;
+                arrid = new ArrayList<>();
+                arrname = new ArrayList<>();
+                arrRatin = new ArrayList<>();
+                arrurls = new ArrayList<>();
+                arruploader = new ArrayList<>();
                 getURLs();
                 bkAdapter.notifyDataSetChanged();
             }
@@ -264,6 +261,10 @@ public class MainActivity extends AppCompatActivity {
             getjsonobj = new Getjson(sb.toString().trim());
             getImages();
             }
+        } catch (ConnectTimeoutException ce) {
+            Toast.makeText(getApplication(), "Check your internet", Toast.LENGTH_LONG).show();
+        } catch (SocketTimeoutException sc) {
+            Toast.makeText(getApplication(), "Cannot connect", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Log.e("error in dib", e.getMessage());
         }
@@ -293,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
                     bkObj.getLayoutManager().onRestoreInstanceState(recyclerViewState);
 
                 } else {
-                    Toast.makeText(MainActivity.this, "array size 0", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "No more books available now", Toast.LENGTH_LONG).show();
                     for (int i = 0; i < arrname.size(); i++) {
                         Log.d("arrname after 0", arrname.get(i));
                     }
