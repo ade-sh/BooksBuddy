@@ -59,7 +59,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Request" />
-        <activity android:name=".ViewAccount"></activity>
+        <activity android:name=".ViewAccount" />
+        <activity android:name=".TransactionView"></activity>
     </application>
 
 </manifest>

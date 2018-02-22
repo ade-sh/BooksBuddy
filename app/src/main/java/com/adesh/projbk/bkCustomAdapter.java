@@ -64,7 +64,7 @@ public class bkCustomAdapter extends RecyclerView.Adapter<bkCustomAdapter.ViewHo
         viewHolder.img.setTag(arrId.get(viewHolder.getAdapterPosition()));
         viewHolder.rate.setRating(Integer.parseInt(arrRatin.get(viewHolder.getAdapterPosition())));
         String ustr = arrUrl.get(viewHolder.getAdapterPosition());
-        Picasso.with(context1).load(("http://10.0.3.2" + ustr)).placeholder(R.mipmap.im_defbk).resize(450, 235).into(viewHolder.img);
+        Picasso.with(context1).load(("https://determinately-torqu.000webhostapp.com" + ustr)).resize(500, 235).placeholder(R.drawable.defaultloading).into(viewHolder.img);
         viewHolder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

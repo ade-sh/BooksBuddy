@@ -81,16 +81,16 @@ public class sellActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (!result.contains("") || !result.contains("null") && selected.size() != 0 || !result.contains("0")) {
+                if (!result.contains("") || !result.contains("null") || !result.contains("0")) {
                 uploadData();
                 } else {
                     Toast.makeText(getApplicationContext(), "Some error occurred,Try again", Toast.LENGTH_SHORT).show();
                     Toast.makeText(getApplicationContext(), "result=" + result, Toast.LENGTH_SHORT).show();
                 }
-                if (selected.size() < 1) {
+                /*if (selected.isEmpty()) {
                     getImage.setError("Image needed");
                     Toast.makeText(getApplicationContext(), "At least 1 image needed" + selected.size(), Toast.LENGTH_SHORT).show();
-                }
+                }*/
             }
         });
     }
@@ -162,7 +162,7 @@ public class sellActivity extends AppCompatActivity {
         RequestParams params = new RequestParams();
         params.put("u_id", result);
         params.put("type", "sell");
-        client.post("http://10.0.3.2/getBkid.inc.php", params, new TextHttpResponseHandler() {
+        client.post("http://determinately-torqu.000webhostapp.com/getBkid.inc.php", params, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Toast.makeText(getApplicationContext(), "Cannot Connect", Toast.LENGTH_SHORT).show();
@@ -187,7 +187,7 @@ public class sellActivity extends AppCompatActivity {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("username", username);
-        client.post("http://10.0.3.2/getUserID.inc.php", params, new TextHttpResponseHandler() {
+        client.post("http://determinately-torqu.000webhostapp.com/getUserID.inc.php", params, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Toast.makeText(getApplicationContext(), "Cannot Connect try again" + responseString, Toast.LENGTH_SHORT).show();

@@ -23,6 +23,8 @@ public class Getjson {
     public static final String ReqImg1 = "RqImg1";
     public static final String ReqImg2 = "RqImg2";
     public static final String ReqImg3 = "RqImg3";
+    public static final String stype = "type";
+    public static final String sStatus = "status";
     public static final String B_id = "b_id";
     public static ArrayList<String> arrname;
     public static ArrayList<String> arrid;
@@ -34,6 +36,8 @@ public class Getjson {
     public static ArrayList<String> arrDisc;
     public static ArrayList<String> arruid;
     public static ArrayList<String> arrTime;
+    public static ArrayList<String> arrType;
+    public static ArrayList<String> arrStatus;
     public static String JUserName = "";
     public static String JEmail = "";
     public static String JProfilePic = "";
@@ -108,6 +112,23 @@ public class Getjson {
             JEmail = urls.getJSONObject(0).getString("Email");
             JPhone = urls.getJSONObject(0).getString("phone");
             JProfilePic = urls.getJSONObject(0).getString("profile_pic");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getTransDetail() {
+        try {
+            arrname = new ArrayList<>();
+            arrTime = new ArrayList<>();
+            arrStatus = new ArrayList<>();
+            arrType = new ArrayList<>();
+            for (int i = 0; i < urls.length(); i++) {
+                arrname.add(urls.getJSONObject(i).getString(BookName));
+                arrTime.add(urls.getJSONObject(i).getString(bkTime));
+                arrType.add(urls.getJSONObject(i).getString(stype));
+                arrStatus.add(urls.getJSONObject(i).getString(sStatus));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

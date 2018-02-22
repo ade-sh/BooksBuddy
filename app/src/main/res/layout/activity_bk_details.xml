@@ -41,7 +41,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="230dp"
                         android:transitionName="@string/main_transition_iv"
-                        app:srcCompat="@mipmap/im_defbk" />
+                        app:srcCompat="@drawable/defaultloading" />
 
                     <ProgressBar
                         android:id="@+id/pb_bkdetail"

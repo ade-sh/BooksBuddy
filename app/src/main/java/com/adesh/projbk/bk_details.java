@@ -230,7 +230,7 @@ public class bk_details extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             String ustr = Getjson.arrurls.get(0);
-            Picasso.with(bk_details.this).load(("http://10.0.3.2" + ustr)).placeholder(R.mipmap.im_defbk).into(bk_img);
+            Picasso.with(bk_details.this).load(("https://determinately-torqu.000webhostapp.com" + ustr)).placeholder(R.drawable.defaultloading).into(bk_img);
             FragmentManager fm=getSupportFragmentManager();
             FragmentTransaction ft=fm.beginTransaction();
             ft.add(R.id.fragPlace,bkfragment);

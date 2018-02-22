@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -47,7 +48,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import cz.msebera.android.httpclient.Header;
 
-public class AccountActivity extends AppCompatActivity implements View.OnClickListener {
+public class AccountActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     Button btnLogout, btnsavImg, btncngImg;
     Getjson getjsonobj;
@@ -76,6 +77,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
         btncngImg = (Button) findViewById(R.id.btncngImg);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.llaccdetail, arr);
         lvaccdetail.setAdapter(adapter);
+        lvaccdetail.setOnItemClickListener(this);
         btnLogout = (Button) findViewById(R.id.btn_Logout);
         btnsavImg.setOnClickListener(this);
         btnLogout.setOnClickListener(new View.OnClickListener() {
@@ -183,8 +185,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
                 String arr[] = {"Username: " + Getjson.JUserName, "Phone no: " + Getjson.JPhone, "Emailid: " + Getjson.JEmail, "Password", "Location", "My Purchases", "My Orders", "Request", "Sold", "All Transactions"};
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.llaccdetail, arr);
                 lvaccdetail.setAdapter(adapter);
-                Log.i("Prof Pic url", "http://10.0.3.2/" + Getjson.JProfilePic.trim());
-                Picasso.with(AccountActivity.this).load("http://10.0.3.2/" + Getjson.JProfilePic.trim()).resize(300, 300).into(ivAccImg, new Callback() {
+                Picasso.with(AccountActivity.this).load("https://determinately-torqu.000webhostapp.com" + Getjson.JProfilePic.trim()).resize(300, 300).into(ivAccImg, new Callback() {
                     @Override
                     public void onSuccess() {
                         Bitmap imageBitmap = ((BitmapDrawable) ivAccImg.getDrawable()).getBitmap();
@@ -243,7 +244,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
                 SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putString("profPic", Getjson.JProfilePic);
-                editor.commit();
+                editor.apply();
             }
         });
     }
@@ -294,7 +295,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("username", username);
-        client.post("http://10.0.3.2/getUserID.inc.php", params, new TextHttpResponseHandler() {
+        client.post(getString(R.string.httpUrl) + "/getUserID.inc.php", params, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Toast.makeText(getApplicationContext(), "Cannot Connect", Toast.LENGTH_SHORT).show();
@@ -313,6 +314,41 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
                 }
             }
         });
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (res == null) {
+            Toast.makeText(AccountActivity.this, "Please wait,Loading items", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (position == 0) {
+            Toast.makeText(getApplicationContext(), "Change name not available now", Toast.LENGTH_SHORT).show();
+        } else if (position == 1) {
+            Toast.makeText(getApplicationContext(), "Change Phone no not available now", Toast.LENGTH_SHORT).show();
+        } else if (position == 2) {
+            Toast.makeText(getApplicationContext(), "Email Change  not available now", Toast.LENGTH_SHORT).show();
+        } else if (position == 3) {
+            Toast.makeText(getApplicationContext(), "Password Change  not available now", Toast.LENGTH_SHORT).show();
+        } else if (position == 4) {
+            Toast.makeText(getApplicationContext(), "Location  not available now", Toast.LENGTH_SHORT).show();
+        } else if (position == 8) {
+            Intent intent = new Intent(AccountActivity.this, TransactionView.class);
+            intent.putExtra("uid", res);
+            intent.putExtra("transType", "sold");
+            startActivity(intent);
+        } else if (position == 7) {
+            Intent intent = new Intent(AccountActivity.this, TransactionView.class);
+            intent.putExtra("uid", res);
+            intent.putExtra("transType", "request");
+            startActivity(intent);
+        } else if (position == 9) {
+            Intent intent = new Intent(AccountActivity.this, TransactionView.class);
+            intent.putExtra("uid", res);
+            intent.putExtra("transType", "All");
+            startActivity(intent);
+        }
+
     }
 }
 

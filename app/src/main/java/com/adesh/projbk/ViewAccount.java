@@ -56,7 +56,7 @@ public class ViewAccount extends AppCompatActivity {
                 String arr[] = {"Username: " + Getjson.JUserName, "Phone no: " + Getjson.JPhone, "Emailid: " + Getjson.JEmail, "All Products"};
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.llaccdetail, arr);
                 lv.setAdapter(adapter);
-                Picasso.with(ViewAccount.this).load("http://10.0.3.2/" + Getjson.JProfilePic.trim()).resize(300, 300).into(iv, new Callback() {
+                Picasso.with(ViewAccount.this).load("https://determinately-torqu.000webhostapp.com" + Getjson.JProfilePic.trim()).resize(300, 300).into(iv, new Callback() {
                     @Override
                     public void onSuccess() {
                         Bitmap imageBitmap = ((BitmapDrawable) iv.getDrawable()).getBitmap();

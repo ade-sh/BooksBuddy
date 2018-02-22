@@ -187,7 +187,7 @@ public class Registration_activity extends AppCompatActivity {
             URL url;
             try {
                 //setup HttpURLConnection class to send aand receive data from php and mysql
-                url = new URL((R.string.httpUrl) + "/register.inc.php");
+                url = new URL("http://www.determinately-torqu.000webhostapp.com/register.inc.php");
                 conn = (HttpURLConnection) url.openConnection();
                 Thread.sleep(2000);
                 conn.setConnectTimeout(4000);

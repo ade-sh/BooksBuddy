@@ -101,7 +101,7 @@ public class Request extends AppCompatActivity implements View.OnClickListener {
         RequestParams params = new RequestParams();
         params.put("u_id", Uid);
         params.put("type", "request");
-        client.post("http://10.0.3.2/getBkid.inc.php", params, new TextHttpResponseHandler() {
+        client.post("http://determinately-torqu.000webhostapp.com/getBkid.inc.php", params, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Toast.makeText(getApplicationContext(), "Cannot Connect", Toast.LENGTH_SHORT).show();
@@ -172,7 +172,7 @@ public class Request extends AppCompatActivity implements View.OnClickListener {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("username", username);
-        client.post("http://10.0.3.2/getUserID.inc.php", params, new TextHttpResponseHandler() {
+        client.post("http://determinately-torqu.000webhostapp.com/getUserID.inc.php", params, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Toast.makeText(getApplicationContext(), "Cannot Connect", Toast.LENGTH_SHORT).show();

@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                         int fsize = arrname.size();
                         getURLs();
                         try {
-                            Thread.sleep(500);
+                            Thread.sleep(100);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
             String spProfilep = spd.getString("ProfilePic", "");
             navUsr.setText(spusrname);
             navEmail.setText(spEmail);
-            Picasso.with(MainActivity.this).load("http://10.0.3.2/" + spProfilep).resize(180, 180).into(ivNavPp, new Callback() {
+            Picasso.with(MainActivity.this).load("https://determinately-torqu.000webhostapp.com" + spProfilep).resize(180, 180).into(ivNavPp, new Callback() {
                 @Override
                 public void onSuccess() {
                     Bitmap imageBitmap = ((BitmapDrawable) ivNavPp.getDrawable()).getBitmap();
@@ -206,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.m_acc: {
                 Intent StartLogin = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(StartLogin);
+                return true;
             }
             case R.id.app_bar_search: {
                 onSearchRequested();
@@ -284,6 +285,12 @@ public class MainActivity extends AppCompatActivity {
                 super.onPostExecute(v);
 
                 if (Getjson.arrname.size() != 0) {
+                    arrname.add(Getjson.arrname.get(Getjson.arrname.size() - 2));
+                    arrid.add(Getjson.arrid.get(Getjson.arrid.size() - 2));
+                    arrurls.add(Getjson.arrurls.get(Getjson.arrurls.size() - 2));
+                    arrRatin.add(Getjson.arrRatin.get(Getjson.arrRatin.size() - 2));
+                    arruploader.add(Getjson.arrUploader.get(Getjson.arrRatin.size() - 2));
+                    //second time
                 arrname.add(Getjson.arrname.get(Getjson.arrname.size() - 1));
                 arrid.add(Getjson.arrid.get(Getjson.arrid.size() - 1));
                 arrurls.add(Getjson.arrurls.get(Getjson.arrurls.size() - 1));
@@ -295,9 +302,6 @@ public class MainActivity extends AppCompatActivity {
 
                 } else {
                     Toast.makeText(MainActivity.this, "No more books available now", Toast.LENGTH_LONG).show();
-                    for (int i = 0; i < arrname.size(); i++) {
-                        Log.d("arrname after 0", arrname.get(i));
-                    }
                 }
             }
 
