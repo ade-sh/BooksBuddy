@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.adesh.projbk.dummy.DummyContent;
 import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
@@ -32,7 +33,7 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class bk_details extends AppCompatActivity {
+public class bk_details extends AppCompatActivity implements ReviewsFragment.OnListFragmentInteractionListener {
     public Getjson getjsonobj;
     int load = 0;
     Fragment bkfragment;
@@ -50,18 +51,17 @@ public class bk_details extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     frag=bkfragment;
-                    ft.replace(R.id.fragPlace,frag);
-                    ft.commit();
+                    ft.replace(R.id.fragPlace, frag).addToBackStack(null).commit();
                     return true;
                 case R.id.navigation_reviews:
-
+                    frag = new ReviewsFragment();
+                    ft.replace(R.id.fragPlace, frag).addToBackStack(null).commit();
                     return true;
                 case R.id.navigation_about:
                     if (!Getjson.arrname.get(0).isEmpty()) {
                         pb.setVisibility(View.GONE);
                     frag=new bkUserFragment();
-                    ft.replace(R.id.fragPlace,frag);
-                        ft.commit();
+                        ft.replace(R.id.fragPlace, frag).addToBackStack(null).commit();
                     } else {
                         ft.detach(frag);
                         pb.setVisibility(View.VISIBLE);
@@ -155,6 +155,11 @@ public class bk_details extends AppCompatActivity {
         st.execute();
     }
 
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
+    }
+
     public class fillData extends AsyncTask<Object, Object, String> {
         String Img_id;
         String upType;
@@ -230,7 +235,7 @@ public class bk_details extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             String ustr = Getjson.arrurls.get(0);
-            Picasso.with(bk_details.this).load(("https://determinately-torqu.000webhostapp.com" + ustr)).placeholder(R.drawable.defaultloading).into(bk_img);
+            Picasso.with(bk_details.this).load(("http://10.0.3.2" + ustr)).placeholder(R.drawable.defaultloading).into(bk_img);
             FragmentManager fm=getSupportFragmentManager();
             FragmentTransaction ft=fm.beginTransaction();
             ft.add(R.id.fragPlace,bkfragment);

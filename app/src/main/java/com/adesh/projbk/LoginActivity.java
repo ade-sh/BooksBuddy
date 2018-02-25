@@ -282,7 +282,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             AsyncHttpClient client = new AsyncHttpClient();
             RequestParams params = new RequestParams();
             params.put("username", mEmail);
-            client.post("http://determinately-torqu.000webhostapp.com/getUserID.inc.php", params, new TextHttpResponseHandler() {
+            client.post(getString(R.string.httpUrl) + "/getUserID.inc.php", params, new TextHttpResponseHandler() {
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 

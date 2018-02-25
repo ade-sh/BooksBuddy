@@ -185,7 +185,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
                 String arr[] = {"Username: " + Getjson.JUserName, "Phone no: " + Getjson.JPhone, "Emailid: " + Getjson.JEmail, "Password", "Location", "My Purchases", "My Orders", "Request", "Sold", "All Transactions"};
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.llaccdetail, arr);
                 lvaccdetail.setAdapter(adapter);
-                Picasso.with(AccountActivity.this).load("https://determinately-torqu.000webhostapp.com" + Getjson.JProfilePic.trim()).resize(300, 300).into(ivAccImg, new Callback() {
+                Picasso.with(AccountActivity.this).load("http://10.0.3.2" + Getjson.JProfilePic.trim()).resize(300, 300).into(ivAccImg, new Callback() {
                     @Override
                     public void onSuccess() {
                         Bitmap imageBitmap = ((BitmapDrawable) ivAccImg.getDrawable()).getBitmap();

@@ -162,7 +162,7 @@ public class sellActivity extends AppCompatActivity {
         RequestParams params = new RequestParams();
         params.put("u_id", result);
         params.put("type", "sell");
-        client.post("http://determinately-torqu.000webhostapp.com/getBkid.inc.php", params, new TextHttpResponseHandler() {
+        client.post(getString(R.string.httpUrl) + "/getBkid.inc.php", params, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Toast.makeText(getApplicationContext(), "Cannot Connect", Toast.LENGTH_SHORT).show();
@@ -187,7 +187,7 @@ public class sellActivity extends AppCompatActivity {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("username", username);
-        client.post("http://determinately-torqu.000webhostapp.com/getUserID.inc.php", params, new TextHttpResponseHandler() {
+        client.post(getString(R.string.httpUrl) + "/getUserID.inc.php", params, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 Toast.makeText(getApplicationContext(), "Cannot Connect try again" + responseString, Toast.LENGTH_SHORT).show();

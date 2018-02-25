@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,17 +16,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
-import javax.net.ssl.HttpsURLConnection;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class Registration_activity extends AppCompatActivity {
     public View RegisterFormview, ProgressBarView;
@@ -183,56 +178,18 @@ public class Registration_activity extends AppCompatActivity {
         @Override
         protected String doInBackground(Object... params) {
 
-            HttpURLConnection conn;
-            URL url;
+            OkHttpClient httpClient = new OkHttpClient();
+            RequestBody parameter = new FormBody.Builder().add("username", username).add("password", password).add("email", email).add("phone", phone).build();
+            okhttp3.Request request = new Request.Builder().url(getString(R.string.httpUrl) + "/register.inc.php").post(parameter).build();
+            String MyResult = "";
             try {
-                //setup HttpURLConnection class to send aand receive data from php and mysql
-                url = new URL("http://www.determinately-torqu.000webhostapp.com/register.inc.php");
-                conn = (HttpURLConnection) url.openConnection();
-                Thread.sleep(2000);
-                conn.setConnectTimeout(4000);
-                conn.setRequestMethod("POST");
-
-                //setDoInput and setDoOutput method depict handling of both send and receive
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-                //Appends parameters to URL
-                Uri.Builder builder = new Uri.Builder().appendQueryParameter("username", username).appendQueryParameter("password", password).appendQueryParameter("email", email).appendQueryParameter("phone", phone);
-                String query = builder.build().getEncodedQuery();
-
-                //Open Connection for sending data
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter bwriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                bwriter.write(query);
-                bwriter.flush();
-                bwriter.close();
-                os.close();
-                conn.connect();
-
-                int response_code = conn.getResponseCode();
-                //Check if successful connection made
-                if (response_code == HttpsURLConnection.HTTP_OK) {
-                    //Read Data sent from server
-                    InputStream input = conn.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-                    StringBuilder result = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        result.append(line);
-                    }
-                    //pass data to postExecute method
-                    return (result.toString());
-                } else {
-                    return ("unsucessful");
-                }
-            } catch (IOException e3) {
-                e3.printStackTrace();
-                return ("Exception" + e3.getMessage());
-            } catch (InterruptedException e) {
-                return ("interrupted");
+                Response response = httpClient.newCall(request).execute();
+                MyResult = response.body().string();
+                Log.d("okhttp regis", MyResult);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-
+            return MyResult;
         }
 
         @Override
@@ -246,16 +203,9 @@ public class Registration_activity extends AppCompatActivity {
                 editor.putString("Password", password);
                 editor.putBoolean("IsLogged", true);
                 editor.apply();
-                /*
-                ProgressDialog pd=ProgressDialog.show(Registration_activity.this,"Please wait","Loading",true,false);
-                LoginActivity la=new LoginActivity();
-                LoginActivity.UserLoginTask ust=la.new UserLoginTask(email,password);
-                ust.execute((Void) null);
-                pd.dismiss();
-                */
+                finish();
                 Intent smp = new Intent(getApplicationContext(), AccountActivity.class);
                 startActivity(smp);
-                finish();
             } else {
                 Log.e("php excep", result);
                 Toast.makeText(getApplicationContext(), "cannot register now" + result, Toast.LENGTH_LONG).show();

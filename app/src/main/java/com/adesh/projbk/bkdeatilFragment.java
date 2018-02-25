@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -36,7 +38,7 @@ public class bkdeatilFragment extends Fragment {
     Button delete;
     String username, Password, uid;
     ProgressBar pb;
-    private TextView mTime, et_bkName, et_bkDisk;
+    private TextView mTime, et_bkName, et_bkDisk, price;
 
     public bkdeatilFragment() {
         // Required empty public constructor
@@ -52,6 +54,7 @@ public class bkdeatilFragment extends Fragment {
         mTime = (TextView) v.findViewById(R.id.mtv_view);
         et_bkName = (TextView) v.findViewById(R.id.et_bkName);
         et_bkDisk = (TextView) v.findViewById(R.id.tv_deatils);
+        price = (TextView) v.findViewById(R.id.tv_price);
         ratingBar = (RatingBar) v.findViewById(R.id.rb_bkRating);
         rvAllimg = (RecyclerView) v.findViewById(R.id.lvdetailItems);
         pb = (ProgressBar) v.findViewById(R.id.pb_bkfragdetail);
@@ -75,9 +78,11 @@ public class bkdeatilFragment extends Fragment {
         }
         if (Getjson.arrUploader.get(0).contains("Request")) {
             btnBuy.setVisibility(View.GONE);
+            price.setVisibility(View.GONE);
         }
         et_bkName.setText(Getjson.arrname.get(0));
         et_bkDisk.setText(Getjson.arrDisc.get(0));
+        price.setText(Getjson.arrPrice.get(0));
         mTime.setText(Getjson.arrTime.get(0));
         ratingBar.setRating(Integer.parseInt(Getjson.arrRatin.get(0)));
         LinearLayoutManager llm = new LinearLayoutManager(getActivity().getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -117,6 +122,16 @@ public class bkdeatilFragment extends Fragment {
                         startActivity(in);
                     }
                 });
+            }
+        });
+        btnBuy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                Fragment frag = new BuyFragment();
+                ft.replace(R.id.lv_buyfragPlace, frag);
+                ft.commit();
             }
         });
         return v;

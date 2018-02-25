@@ -17,6 +17,7 @@ public class Getjson {
     public static final String BookName = "bookName";
     public static final String Usr_id = "u_id";
     public static final String bkTime = "time";
+    public static final String price = "price";
     public static final String ReqName = "RequestName";
     public static final String ReqId = "RequestId";
     public static final String ReqDisc = "RequestDisc";
@@ -38,6 +39,7 @@ public class Getjson {
     public static ArrayList<String> arrTime;
     public static ArrayList<String> arrType;
     public static ArrayList<String> arrStatus;
+    public static ArrayList<String> arrPrice;
     public static String JUserName = "";
     public static String JEmail = "";
     public static String JProfilePic = "";
@@ -49,6 +51,7 @@ public class Getjson {
     public Getjson(String json) {
         this.json = json;
         try {
+            Log.d("json object", json);
             JSONObject jsonObject = new JSONObject(json);
             urls = jsonObject.getJSONArray(JSON_ARRAY);
         } catch (JSONException e) {
@@ -80,6 +83,7 @@ public class Getjson {
             arrUploader = new ArrayList<>();
             arruid = new ArrayList<>();
             arrTime = new ArrayList<>();
+            arrPrice = new ArrayList<>();
             Log.i("urls Length", urls.length() + "");
             for (int i = 0; i < urls.length(); i++) {
                 //inserting into Arraylist
@@ -94,6 +98,7 @@ public class Getjson {
                 arrUploader.add(urls.getJSONObject(i).getString("uploader"));
                 arruid.add(urls.getJSONObject(i).getString(Usr_id));
                 arrTime.add(urls.getJSONObject(i).getString(bkTime));
+                arrPrice.add(urls.getJSONObject(i).getString(price));
             }
         } catch (JSONException e) {
             e.printStackTrace();

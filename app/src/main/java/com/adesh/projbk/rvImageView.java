@@ -50,7 +50,7 @@ public class rvImageView extends RecyclerView.Adapter<rvImageView.ViewHolder> {
                         Log.i("selected", "" + selected.get(position).length());
                         String ustr = selected.get(position);
                         Log.i("imView", ustr);
-                        Picasso.with(context1).load("http://determinately-torqu.000webhostapp.com" + ustr).placeholder(R.drawable.default_user).into(holder.img);
+                        Picasso.with(context1).load(context1.getString(R.string.httpUrl) + ustr).placeholder(R.drawable.defaultloading).into(holder.img);
                     }
         }
             }

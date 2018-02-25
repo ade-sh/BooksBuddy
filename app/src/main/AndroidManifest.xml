@@ -60,7 +60,10 @@
         </activity>
         <activity android:name=".Request" />
         <activity android:name=".ViewAccount" />
-        <activity android:name=".TransactionView"></activity>
+        <activity android:name=".TransactionView" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
     </application>
 
 </manifest>

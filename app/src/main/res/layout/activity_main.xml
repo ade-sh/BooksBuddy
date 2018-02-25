@@ -44,6 +44,7 @@
             android:layout_marginRight="5dp"
             android:divider="@color/transparent"
             android:dividerHeight="10dp"
+            android:layoutAnimation="@anim/layout_animation_fall_down"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />

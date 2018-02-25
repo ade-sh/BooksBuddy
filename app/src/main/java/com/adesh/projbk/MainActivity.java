@@ -26,6 +26,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,7 +78,8 @@ public class MainActivity extends AppCompatActivity {
         arrRatin = new ArrayList<>();
         arrurls = new ArrayList<>();
         arruploader = new ArrayList<>();
-
+        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(MainActivity.this, R.anim.layout_animation_fall_down);
+        bkObj.setLayoutAnimation(animation);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_widget);
@@ -139,6 +142,10 @@ public class MainActivity extends AppCompatActivity {
                     Intent startReq = new Intent(MainActivity.this, Request.class);
                     startActivity(startReq);
                 }
+                if (id == R.id.nav_setting) {
+                    Intent startReq = new Intent(MainActivity.this, SettingsActivity.class);
+                    startActivity(startReq);
+                }
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
@@ -157,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
             String spProfilep = spd.getString("ProfilePic", "");
             navUsr.setText(spusrname);
             navEmail.setText(spEmail);
-            Picasso.with(MainActivity.this).load("https://determinately-torqu.000webhostapp.com" + spProfilep).resize(180, 180).into(ivNavPp, new Callback() {
+            Picasso.with(MainActivity.this).load(getString(R.string.httpUrl) + spProfilep).resize(180, 180).into(ivNavPp, new Callback() {
                 @Override
                 public void onSuccess() {
                     Bitmap imageBitmap = ((BitmapDrawable) ivNavPp.getDrawable()).getBitmap();
