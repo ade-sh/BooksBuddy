@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_alignBottom="@id/lvbuydetail"
-    android:layout_marginTop="190dp"
+    android:layout_marginTop="50dp"
     tools:context="com.adesh.projbk.BuyFragment">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         app:cardBackgroundColor="@color/cardview_light_background"
         app:cardCornerRadius="8dp"
         app:cardElevation="2dp"

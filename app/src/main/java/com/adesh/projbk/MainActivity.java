@@ -328,6 +328,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         scrollListener.resetState();
         SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
+        runLayoutAnimation();
         LoginStatus = sp.getBoolean("IsLogged", false);
         if (!LoginStatus) {
             navUsr.setText("Username");
@@ -343,6 +344,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void runLayoutAnimation() {
+   /* LayoutAnimationController controller=AnimationUtils.loadLayoutAnimation(MainActivity.this,R.anim.item_animation_fall_down);
+    bkObj.setLayoutAnimation(controller);
+    bkObj.scheduleLayoutAnimation();*/
+    }
     @Override
     public void onStart() {
         super.onStart();
@@ -354,5 +360,6 @@ public class MainActivity extends AppCompatActivity {
         super.onRestart();
         scrollListener.resetState();
         bkAdapter.notifyDataSetChanged();
+        runLayoutAnimation();
     }
 }

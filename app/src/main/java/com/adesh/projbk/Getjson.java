@@ -18,15 +18,14 @@ public class Getjson {
     public static final String Usr_id = "u_id";
     public static final String bkTime = "time";
     public static final String price = "price";
-    public static final String ReqName = "RequestName";
-    public static final String ReqId = "RequestId";
-    public static final String ReqDisc = "RequestDisc";
-    public static final String ReqImg1 = "RqImg1";
-    public static final String ReqImg2 = "RqImg2";
-    public static final String ReqImg3 = "RqImg3";
     public static final String stype = "type";
     public static final String sStatus = "status";
     public static final String B_id = "b_id";
+    private static final String rvBody = "body";
+    private static final String rvHead = "head";
+    private static final String rvRating = "Rating";
+    private static final String rvUser = "user";
+    private static final String rvCount = "RevCount";
     public static ArrayList<String> arrname;
     public static ArrayList<String> arrid;
     public static ArrayList<String> arrRatin;
@@ -40,6 +39,11 @@ public class Getjson {
     public static ArrayList<String> arrType;
     public static ArrayList<String> arrStatus;
     public static ArrayList<String> arrPrice;
+    public static ArrayList<String> arrRvBody;
+    public static ArrayList<String> arrRvHead;
+    public static ArrayList<String> arrRvUser;
+    public static ArrayList<Integer> arrRvRating;
+    public static ArrayList<String> arrRvCount;
     public static String JUserName = "";
     public static String JEmail = "";
     public static String JProfilePic = "";
@@ -84,6 +88,7 @@ public class Getjson {
             arruid = new ArrayList<>();
             arrTime = new ArrayList<>();
             arrPrice = new ArrayList<>();
+            arrRvCount = new ArrayList<>();
             Log.i("urls Length", urls.length() + "");
             for (int i = 0; i < urls.length(); i++) {
                 //inserting into Arraylist
@@ -99,6 +104,7 @@ public class Getjson {
                 arruid.add(urls.getJSONObject(i).getString(Usr_id));
                 arrTime.add(urls.getJSONObject(i).getString(bkTime));
                 arrPrice.add(urls.getJSONObject(i).getString(price));
+                arrRvCount.add(urls.getJSONObject(i).getString(rvCount));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -110,6 +116,13 @@ public class Getjson {
         JEmail = "";
         JPhone = "";
         JProfilePic = "";
+    }
+
+    public void clrRev() {
+        arrRvHead.clear();
+        arrRvBody.clear();
+        arrRvRating.clear();
+        arrRvUser.clear();
     }
     public void getUser() {
         try {
@@ -139,5 +152,21 @@ public class Getjson {
         }
     }
 
+    public void getReviews() {
+        try {
+            arrRvHead = new ArrayList<>();
+            arrRvBody = new ArrayList<>();
+            arrRvRating = new ArrayList<>();
+            arrRvUser = new ArrayList<>();
+            for (int i = 0; i < urls.length(); i++) {
+                arrRvHead.add(urls.getJSONObject(i).getString(rvHead));
+                arrRvBody.add(urls.getJSONObject(i).getString(rvBody));
+                arrRvRating.add(Integer.parseInt(urls.getJSONObject(i).getString(rvRating)));
+                arrRvUser.add(urls.getJSONObject(i).getString(rvUser));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
+    }
 }

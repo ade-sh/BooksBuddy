@@ -2,6 +2,7 @@ package com.adesh.projbk;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,7 +19,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.adesh.projbk.dummy.DummyContent;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
@@ -33,7 +36,9 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class bk_details extends AppCompatActivity implements ReviewsFragment.OnListFragmentInteractionListener {
+import cz.msebera.android.httpclient.Header;
+
+public class bk_details extends AppCompatActivity {
     public Getjson getjsonobj;
     int load = 0;
     Fragment bkfragment;
@@ -54,8 +59,14 @@ public class bk_details extends AppCompatActivity implements ReviewsFragment.OnL
                     ft.replace(R.id.fragPlace, frag).addToBackStack(null).commit();
                     return true;
                 case R.id.navigation_reviews:
+                    if (Getjson.arrUploader.get(0) != null && Getjson.arrUploader.get(0).trim().contains("publisher")) {
+                        if (Getjson.arrRvHead != null && !Getjson.arrRvHead.isEmpty()) {
                     frag = new ReviewsFragment();
-                    ft.replace(R.id.fragPlace, frag).addToBackStack(null).commit();
+                            ft.replace(R.id.fragPlace, frag).addToBackStack(null).commit();
+                        } else {
+                            Toast.makeText(bk_details.this, "Please wait... fetching Reviews", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                     return true;
                 case R.id.navigation_about:
                     if (!Getjson.arrname.get(0).isEmpty()) {
@@ -139,6 +150,7 @@ public class bk_details extends AppCompatActivity implements ReviewsFragment.OnL
                         }
                         getjsonobj = new Getjson(result.toString());
                         getjsonobj.clrUser();
+                        getjsonobj.clrRev();
                         getjsonobj.getUser();
 
                     }
@@ -155,9 +167,25 @@ public class bk_details extends AppCompatActivity implements ReviewsFragment.OnL
         st.execute();
     }
 
-    @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    private void getReviews() {
+        SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
+        String uid = sp.getString("Uid", null);
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.add("bkid", Getjson.arrid.get(0).trim());
+        params.add("uid", "0");
+        client.post(getString(R.string.httpUrl) + "/getReviews.inc.php", params, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Toast.makeText(bk_details.this, "some error occured Cannot Fetch Reviews", Toast.LENGTH_SHORT).show();
+            }
 
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                getjsonobj = new Getjson(responseString);
+                getjsonobj.getReviews();
+            }
+        });
     }
 
     public class fillData extends AsyncTask<Object, Object, String> {
@@ -235,7 +263,7 @@ public class bk_details extends AppCompatActivity implements ReviewsFragment.OnL
         @Override
         protected void onPostExecute(String result) {
             String ustr = Getjson.arrurls.get(0);
-            Picasso.with(bk_details.this).load(("http://10.0.3.2" + ustr)).placeholder(R.drawable.defaultloading).into(bk_img);
+            Picasso.with(bk_details.this).load((getString(R.string.httpUrl) + ustr)).placeholder(R.drawable.defaultloading).into(bk_img);
             FragmentManager fm=getSupportFragmentManager();
             FragmentTransaction ft=fm.beginTransaction();
             ft.add(R.id.fragPlace,bkfragment);
@@ -244,6 +272,9 @@ public class bk_details extends AppCompatActivity implements ReviewsFragment.OnL
                 @Override
                 public void run() {
                     getUserInfo();
+                    if (Getjson.arrUploader.get(0).trim().contains("publisher")) {
+                        getReviews();
+                    }
                     Toast.makeText(bk_details.this,Getjson.arruid.get(0),Toast.LENGTH_SHORT).show();
                 }
             });

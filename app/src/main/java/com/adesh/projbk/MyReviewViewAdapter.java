@@ -4,26 +4,24 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.adesh.projbk.ReviewsFragment.OnListFragmentInteractionListener;
-import com.adesh.projbk.dummy.DummyContent.DummyItem;
+import java.util.ArrayList;
 
-import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class MyReviewViewAdapter extends RecyclerView.Adapter<MyReviewViewAdapter.ViewHolder> {
+    private final ArrayList<String> Head;
+    private final ArrayList<Integer> Rating;
+    private final ArrayList<String> user;
+    private final ArrayList<String> body;
 
-    private final List<DummyItem> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    public MyReviewViewAdapter(ArrayList<String> Head, ArrayList<Integer> Rating, ArrayList<String> user, ArrayList<String> body) {
 
-    public MyReviewViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
-        mListener = listener;
+        this.Head = Head;
+        this.Rating = Rating;
+        this.body = body;
+        this.user = user;
     }
 
     @Override
@@ -35,43 +33,34 @@ public class MyReviewViewAdapter extends RecyclerView.Adapter<MyReviewViewAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
-
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
-            }
-        });
+        if (!Head.get(position).equals("none") && !body.get(position).equals("none")) {
+            holder.Head.setText(Head.get(position));
+            holder.rating.setRating(Rating.get(position));
+            holder.User.setText("By " + user.get(position));
+            holder.Body.setText(body.get(position));
+        } else {
+            holder.Head.setText("No Review available for this book");
+            holder.Body.setVisibility(View.GONE);
+            holder.rating.setVisibility(View.GONE);
+            holder.User.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return body.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public DummyItem mItem;
-
+        TextView Head, User, Body;
+        RatingBar rating;
         public ViewHolder(View view) {
             super(view);
-            mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            Head = (TextView) view.findViewById(R.id.tv_review_head);
+            Body = (TextView) view.findViewById(R.id.tv_review_Body);
+            User = (TextView) view.findViewById(R.id.tv_review_user);
+            rating = (RatingBar) view.findViewById(R.id.rb_review);
         }
 
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
-        }
     }
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Books buddy</string>
+    <string name="app_name">Booksbuddy</string>
     <string name="title_activity_bk_details">bk_details</string>
     <string name="title_main">main</string>
     <string name="title_reviews">reviews</string>

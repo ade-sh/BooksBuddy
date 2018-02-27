@@ -1,14 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/list"
-    android:name="com.adesh.projbk.ReviewsFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
-    android:paddingTop="90dp"
-    app:layoutManager="LinearLayoutManager"
-    tools:context="com.adesh.projbk.ReviewsFragment"
-    tools:listitem="@layout/fragment_reviews" />
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/lv_frag_place_review"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="15dp"
+        android:elevation="1dp"
+        android:orientation="vertical"></LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btn_fragsetReview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="322dp"
+        app:elevation="7dp"
+        app:srcCompat="@android:drawable/btn_star_big_on" />
+
+    <ProgressBar
+        android:id="@+id/pbReviewList"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="50dp"
+        android:visibility="gone" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvReviewList"
+        android:name="com.adesh.projbk.ReviewsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="190dp"
+        android:paddingTop="90dp"
+        app:layoutManager="LinearLayoutManager"
+        tools:context="com.adesh.projbk.ReviewsFragment"
+        tools:listitem="@layout/fragment_reviews">
+
+    </android.support.v7.widget.RecyclerView>
+</FrameLayout>

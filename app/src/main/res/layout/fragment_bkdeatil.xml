@@ -2,6 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="250dp"
+    android:paddingTop="30dp"
     tools:context="com.adesh.projbk.bkdeatilFragment">
 
     <LinearLayout
@@ -52,6 +54,7 @@
             android:layout_height="100dp"
             android:layout_marginLeft="120dp"
             android:visibility="gone" />
+
         <TextView
             android:id="@+id/mtv_view"
             android:layout_width="match_parent"
@@ -67,6 +70,12 @@
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:editable="false"
             android:text="@string/title_main" />
+
+        <LinearLayout
+            android:id="@+id/lv_buyfragPlace"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
