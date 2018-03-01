@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,7 +66,7 @@ public class bkdeatilFragment extends Fragment {
         Password = sp.getString("Password", null);
         uid = sp.getString("Uid", null);
 
-        if (Getjson.arruid.get(0).equals(uid)) {
+        if (Getjson.arruid.get(0).equals(uid) && Getjson.arrUploader.get(0).equals("user")) {
             delete.setVisibility(View.VISIBLE);
             btnBuy.setVisibility(View.GONE);
 
@@ -81,11 +80,13 @@ public class bkdeatilFragment extends Fragment {
             btnBuy.setVisibility(View.GONE);
             price.setVisibility(View.GONE);
         }
+        if (Getjson.arrname.size() > 0) {
         et_bkName.setText(Getjson.arrname.get(0));
         et_bkDisk.setText(Getjson.arrDisc.get(0));
         price.setText(Getjson.arrPrice.get(0));
         mTime.setText(Getjson.arrTime.get(0));//Reviews "+Getjson.arrRvCount.get(0));
-        ratingBar.setRating(Integer.parseInt(Getjson.arrRatin.get(0)));
+            ratingBar.setRating(Integer.parseInt(Getjson.arrRatin.get(0)));
+        }
         LinearLayoutManager llm = new LinearLayoutManager(getActivity().getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
         ArrayList lvUrls = new ArrayList();
 
@@ -135,17 +136,7 @@ public class bkdeatilFragment extends Fragment {
                 ft.commit();
             }
         });
-        v.setFocusableInTouchMode(true);
-        v.requestFocus();
-        v.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    getActivity().onBackPressed();
-                }
-                return true;
-            }
-        });
+
         return v;
     }
 }

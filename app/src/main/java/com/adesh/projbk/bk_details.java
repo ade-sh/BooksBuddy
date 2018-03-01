@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -56,7 +57,7 @@ public class bk_details extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     frag=bkfragment;
-                    ft.replace(R.id.fragPlace, frag).addToBackStack(null).commit();
+                    ft.replace(R.id.fragPlace, frag).commit();
                     return true;
                 case R.id.navigation_reviews:
                     if (Getjson.arrUploader.get(0) != null && Getjson.arrUploader.get(0).trim().contains("publisher")) {
@@ -69,14 +70,9 @@ public class bk_details extends AppCompatActivity {
                     }
                     return true;
                 case R.id.navigation_about:
-                    if (!Getjson.arrname.get(0).isEmpty()) {
                         pb.setVisibility(View.GONE);
                     frag=new bkUserFragment();
                         ft.replace(R.id.fragPlace, frag).addToBackStack(null).commit();
-                    } else {
-                        ft.detach(frag);
-                        pb.setVisibility(View.VISIBLE);
-                    }
                     return true;
             }
             return false;
@@ -86,6 +82,11 @@ public class bk_details extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences settingPreference = PreferenceManager.getDefaultSharedPreferences(bk_details.this);
+        boolean isDark = settingPreference.getBoolean("switch_preference_theme", false);
+        if (isDark) {
+            setTheme(R.style.Base_ThemeOverlay_AppCompat_Dark_);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bk_details);
         bk_img = (ImageView)findViewById(R.id.iv_bkImg);
@@ -148,10 +149,9 @@ public class bk_details extends AppCompatActivity {
                         while ((line = reader.readLine()) != null) {
                             result.append(line);
                         }
-                        getjsonobj = new Getjson(result.toString());
-                        getjsonobj.clrUser();
-                        getjsonobj.clrRev();
-                        getjsonobj.getUser();
+                        Getjson getjsonobjusr = new Getjson(result.toString());
+                        getjsonobjusr.clrUser();
+                        getjsonobjusr.getUser();
 
                     }
                 } catch (IOException e3) {
@@ -173,19 +173,24 @@ public class bk_details extends AppCompatActivity {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.add("bkid", Getjson.arrid.get(0).trim());
-        params.add("uid", "0");
+        params.add("uid", uid);
         client.post(getString(R.string.httpUrl) + "/getReviews.inc.php", params, new TextHttpResponseHandler() {
             @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+            public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
                 Toast.makeText(bk_details.this, "some error occured Cannot Fetch Reviews", Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                getjsonobj = new Getjson(responseString);
-                getjsonobj.getReviews();
+            public void onSuccess(int statusCode, Header[] headers, String response) {
+                Getjson getjsonobjRev = new Getjson(response);
+                getjsonobjRev.getReviews();
             }
         });
+    }
+
+    public void onStop() {
+        super.onStop();
+        getjsonobj.clrRev();
     }
 
     public class fillData extends AsyncTask<Object, Object, String> {
@@ -247,7 +252,6 @@ public class bk_details extends AppCompatActivity {
                     Log.i("result bkdetail", result.toString());
                     getjsonobj = new Getjson(result.toString());
                     getjsonobj.getAllImages();
-                    getjsonobj.clrUser();
                     return (result.toString());
                 } else {
                     return ("unsucessful");
@@ -266,7 +270,7 @@ public class bk_details extends AppCompatActivity {
             Picasso.with(bk_details.this).load((getString(R.string.httpUrl) + ustr)).placeholder(R.drawable.defaultloading).into(bk_img);
             FragmentManager fm=getSupportFragmentManager();
             FragmentTransaction ft=fm.beginTransaction();
-            ft.add(R.id.fragPlace,bkfragment);
+            ft.replace(R.id.fragPlace, bkfragment);
             ft.commit();
             runOnUiThread(new Runnable() {
                 @Override

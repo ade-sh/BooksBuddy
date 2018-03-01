@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -203,6 +204,10 @@ public class Registration_activity extends AppCompatActivity {
                 editor.putString("Password", password);
                 editor.putBoolean("IsLogged", true);
                 editor.apply();
+                SharedPreferences settingPreference = PreferenceManager.getDefaultSharedPreferences(Registration_activity.this);
+                SharedPreferences.Editor stEdit = settingPreference.edit();
+                stEdit.putString("display_name", username);
+                stEdit.apply();
                 finish();
                 Intent smp = new Intent(getApplicationContext(), AccountActivity.class);
                 startActivity(smp);

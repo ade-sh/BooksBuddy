@@ -80,6 +80,9 @@ public class bkCustomAdapter extends RecyclerView.Adapter<bkCustomAdapter.ViewHo
         });
     }
 
+    private void runLayoutAnimation(Context cntx) {
+
+    }
     @Override
     public int getItemCount() {
         return arrBook.size();

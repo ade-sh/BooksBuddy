@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
@@ -28,7 +29,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,23 +60,42 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<String> arrRatin;
     public ArrayList<String> arrurls;
     public ArrayList<String> arruploader;
+    String recTine = "new", recType = "ALL";
+    String[] SpinarrTime = {"New", "Old"};
+    String[] SpinarrType = {"All", "request", "users", "publishers"};
     RecyclerView bkObj;
     bkCustomAdapter bkAdapter;
     int offset = 0;
     Menu menu;
+    int initSize = 0;
     boolean LoginStatus;
     ImageView ivNavPp;
     TextView navUsr, navEmail;
+    Spinner spinTime, spinType;
     EndlessRecyclerViewScrollListener scrollListener;
     LinearLayoutManager llm;
     private Parcelable recyclerViewState;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        SharedPreferences settingPreference = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        boolean isDark = settingPreference.getBoolean("switch_preference_theme", false);
+        if (isDark) {
+            setTheme(R.style.Base_ThemeOverlay_AppCompat_Dark_);
+        }
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
         bkObj = (RecyclerView) findViewById(R.id.bkObj);
+        spinTime = (Spinner) findViewById(R.id.SpinmainToolbar_Time);
+        spinType = (Spinner) findViewById(R.id.SpinmainToolbar_Sort);
+        //setup spinner data
+        ArrayAdapter<String> spinTimeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, SpinarrTime);
+        ArrayAdapter<String> spinTypeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, SpinarrType);
+        spinTime.setAdapter(spinTimeAdapter);
+        spinType.setAdapter(spinTypeAdapter);
+
+        //setup array for main data
         arrid = new ArrayList<>();
         arrname = new ArrayList<>();
         arrRatin = new ArrayList<>();
@@ -104,14 +127,14 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         offset = page;
-                        int fsize = arrname.size();
+                        int fsize = arrname.size() - 1;
                         getURLs();
                         try {
                             Thread.sleep(100);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        bkAdapter.notifyItemRangeInserted(fsize, 4);
+                        bkAdapter.notifyItemRangeInserted(fsize, 2);
                     }
                 });
             }
@@ -145,6 +168,10 @@ public class MainActivity extends AppCompatActivity {
                 if (id == R.id.nav_setting) {
                     Intent startReq = new Intent(MainActivity.this, SettingsActivity.class);
                     startActivity(startReq);
+                }
+                if (id == R.id.nav_cart) {
+                    Intent intent = new Intent(MainActivity.this, CartActivity.class);
+                    startActivity(intent);
                 }
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
                 drawer.closeDrawer(GravityCompat.START);
@@ -184,6 +211,30 @@ public class MainActivity extends AppCompatActivity {
             navUsr.setText("Username");
             navEmail.setText("Email");
         }
+        spinTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                recTine = SpinarrTime[position];
+                refreshAPP();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                recTine = "new";
+            }
+        });
+        spinType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                recType = SpinarrType[position];
+                refreshAPP();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                recType = "ALL";
+            }
+        });
     }
 
     @Override
@@ -219,21 +270,17 @@ public class MainActivity extends AppCompatActivity {
                 onSearchRequested();
             }
             case R.id.m_refresh: {
-                bkObj.invalidate();
-                scrollListener.resetState();
-                offset = 0;
-                arrid = new ArrayList<>();
-                arrname = new ArrayList<>();
-                arrRatin = new ArrayList<>();
-                arrurls = new ArrayList<>();
-                arruploader = new ArrayList<>();
-                getURLs();
-                bkAdapter.notifyDataSetChanged();
+                refreshAPP();
             }
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void runLayoutAnimation() {
+        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(MainActivity.this, R.anim.layout_animation_fall_down);
+        bkObj.setLayoutAnimation(controller);
+        bkObj.scheduleLayoutAnimation();
+    }
     public void getURLs() {
         recyclerViewState = bkObj.getLayoutManager().onSaveInstanceState();
         BufferedReader bufferedReader = null;
@@ -244,7 +291,8 @@ public class MainActivity extends AppCompatActivity {
             con.setConnectTimeout(60000);
             con.setRequestMethod("POST");
             con.connect();
-            Uri.Builder builder = new Uri.Builder().appendQueryParameter("Offset", offset + "");
+            Log.i("SpinType", recTine + recType);
+            Uri.Builder builder = new Uri.Builder().appendQueryParameter("Offset", offset + "").appendQueryParameter("Time", recTine).appendQueryParameter("Type", recType);
             String query = builder.build().getEncodedQuery();
 
             //Open Connection for sending data
@@ -292,17 +340,19 @@ public class MainActivity extends AppCompatActivity {
                 super.onPostExecute(v);
 
                 if (Getjson.arrname.size() != 0) {
-                    arrname.add(Getjson.arrname.get(Getjson.arrname.size() - 2));
-                    arrid.add(Getjson.arrid.get(Getjson.arrid.size() - 2));
-                    arrurls.add(Getjson.arrurls.get(Getjson.arrurls.size() - 2));
-                    arrRatin.add(Getjson.arrRatin.get(Getjson.arrRatin.size() - 2));
-                    arruploader.add(Getjson.arrUploader.get(Getjson.arrRatin.size() - 2));
-                    //second time
+                    initSize = arrname.size();
+
                 arrname.add(Getjson.arrname.get(Getjson.arrname.size() - 1));
                 arrid.add(Getjson.arrid.get(Getjson.arrid.size() - 1));
                 arrurls.add(Getjson.arrurls.get(Getjson.arrurls.size() - 1));
                 arrRatin.add(Getjson.arrRatin.get(Getjson.arrRatin.size() - 1));
                 arruploader.add(Getjson.arrUploader.get(Getjson.arrRatin.size() - 1));
+                    //second time
+                    arrname.add(Getjson.arrname.get(Getjson.arrname.size() - 2));
+                    arrid.add(Getjson.arrid.get(Getjson.arrid.size() - 2));
+                    arrurls.add(Getjson.arrurls.get(Getjson.arrurls.size() - 2));
+                    arrRatin.add(Getjson.arrRatin.get(Getjson.arrRatin.size() - 2));
+                    arruploader.add(Getjson.arrUploader.get(Getjson.arrRatin.size() - 2));
                 bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin, arruploader);
                     bkObj.setAdapter(bkAdapter);
                     bkObj.getLayoutManager().onRestoreInstanceState(recyclerViewState);
@@ -310,6 +360,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(MainActivity.this, "No more books available now", Toast.LENGTH_LONG).show();
                 }
+                // bkAdapter.notifyItemRangeInserted(initSize, 2);
             }
 
             @Override
@@ -344,11 +395,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void runLayoutAnimation() {
-   /* LayoutAnimationController controller=AnimationUtils.loadLayoutAnimation(MainActivity.this,R.anim.item_animation_fall_down);
-    bkObj.setLayoutAnimation(controller);
-    bkObj.scheduleLayoutAnimation();*/
-    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -359,7 +406,17 @@ public class MainActivity extends AppCompatActivity {
     public void onRestart() {
         super.onRestart();
         scrollListener.resetState();
-        bkAdapter.notifyDataSetChanged();
-        runLayoutAnimation();
+    }
+
+    public void refreshAPP() {
+        bkObj.invalidate();
+        scrollListener.resetState();
+        offset = 0;
+        arrid = new ArrayList<>();
+        arrname = new ArrayList<>();
+        arrRatin = new ArrayList<>();
+        arrurls = new ArrayList<>();
+        arruploader = new ArrayList<>();
+        getURLs();
     }
 }

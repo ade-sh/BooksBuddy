@@ -3,6 +3,7 @@ package com.adesh.projbk;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -31,7 +32,7 @@ public class setReviewFragment extends Fragment {
     EditText etHead, etBody;
     Button setRev, cancelRev;
     RatingBar ratingBar;
-    String uid;
+    String uid, DUserName;
 
     public setReviewFragment() {
         // Required empty public constructor
@@ -50,12 +51,14 @@ public class setReviewFragment extends Fragment {
         ratingBar = (RatingBar) v.findViewById(R.id.rb_frag_setReview);
         SharedPreferences sp = getActivity().getSharedPreferences("UserLogin", MODE_PRIVATE);
         uid = sp.getString("Uid", null);
+        SharedPreferences settingPreference = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        DUserName = settingPreference.getString("display_name", "anon");
         setRev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 OkHttpClient httpClient = new OkHttpClient();
-                RequestBody parameter = new FormBody.Builder().add("head", etHead.getText().toString()).add("body", etBody.getText().toString()).add("rating", ratingBar.getRating() + "").add("uid", uid).add("bkid", Getjson.arrid.get(0).trim()).add("user", "Anon").build();
+                RequestBody parameter = new FormBody.Builder().add("head", etHead.getText().toString()).add("body", etBody.getText().toString()).add("rating", ratingBar.getRating() + "").add("uid", uid).add("bkid", Getjson.arrid.get(0).trim()).add("user", DUserName).build();
                 okhttp3.Request request = new Request.Builder().url(getString(R.string.httpUrl) + "/setReview.inc.php").post(parameter).build();
                 try {
                     Response response = httpClient.newCall(request).execute();

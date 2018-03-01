@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="205dp"
+    android:layout_marginTop="245dp"
     android:layoutAnimation="@anim/layout_animation_slide_down"
     tools:context="com.adesh.projbk.bkUserFragment">
 

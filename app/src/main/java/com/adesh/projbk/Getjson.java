@@ -92,7 +92,7 @@ public class Getjson {
             Log.i("urls Length", urls.length() + "");
             for (int i = 0; i < urls.length(); i++) {
                 //inserting into Arraylist
-                Log.e("arrname in Loop", urls.getJSONObject(i).getString(BookName));
+                Log.e("arrname in Loop", urls.getJSONObject(i).getString(BookName) + " at " + i);
                 arrname.add(urls.getJSONObject(i).getString(BookName));
                 arrurls.add(urls.getJSONObject(i).getString(IMAGEURL));
                 arrurls2.add(urls.getJSONObject(i).getString(IMAGEURL2));
@@ -119,6 +119,11 @@ public class Getjson {
     }
 
     public void clrRev() {
+        arrname = new ArrayList<>();
+        arrRvHead = new ArrayList<>();
+        arrRvBody = new ArrayList<>();
+        arrRvRating = new ArrayList<>();
+        arrRvUser = new ArrayList<>();
         arrRvHead.clear();
         arrRvBody.clear();
         arrRvRating.clear();
