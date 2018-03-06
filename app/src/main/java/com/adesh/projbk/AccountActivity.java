@@ -69,7 +69,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
         setSupportActionBar(toolbar);
         final SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
         String SPusrname = sp.getString("UserName", "user");
-        String arr[] = {SPusrname, "", "", "Password", "Location", "My Purchases", "My Orders", "Request", "Sold", "All Transactions"};
+        String arr[] = {SPusrname, "", "", "Password", "Location", "My Orders", "Request", "Sold", "All Transactions"};
         getUserId();
         ivAccImg = (ImageView) findViewById(R.id.ivAccImg);
         lvaccdetail = (ListView) findViewById(R.id.lvaccdetail);
@@ -184,7 +184,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
                 editor.putString("Profilename", Getjson.JUserName);
                 editor.putString("Email", Getjson.JEmail);
                 editor.apply();
-                String arr[] = {"Username: " + Getjson.JUserName, "Phone no: " + Getjson.JPhone, "Emailid: " + Getjson.JEmail, "Password", "Location", "My Purchases", "My Orders", "Request", "Sold", "All Transactions"};
+                String arr[] = {"Username: " + Getjson.JUserName, "Phone no: " + Getjson.JPhone, "Emailid: " + Getjson.JEmail, "Password", "Location", "My Orders", "Request", "Sold", "All Transactions"};
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.llaccdetail, arr);
                 lvaccdetail.setAdapter(adapter);
                 Picasso.with(AccountActivity.this).load(getString(R.string.httpUrl) + Getjson.JProfilePic.trim()).resize(300, 300).into(ivAccImg, new Callback() {
@@ -334,23 +334,27 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
             Toast.makeText(getApplicationContext(), "Password Change  not available now", Toast.LENGTH_SHORT).show();
         } else if (position == 4) {
             Toast.makeText(getApplicationContext(), "Location  not available now", Toast.LENGTH_SHORT).show();
-        } else if (position == 8) {
+        } else if (position == 5) {
             Intent intent = new Intent(AccountActivity.this, TransactionView.class);
             intent.putExtra("uid", res);
-            intent.putExtra("transType", "sold");
+            intent.putExtra("transType", "order");
             startActivity(intent);
-        } else if (position == 7) {
+        } else if (position == 6) {
             Intent intent = new Intent(AccountActivity.this, TransactionView.class);
             intent.putExtra("uid", res);
             intent.putExtra("transType", "request");
             startActivity(intent);
-        } else if (position == 9) {
+        } else if (position == 8) {
             Intent intent = new Intent(AccountActivity.this, TransactionView.class);
             intent.putExtra("uid", res);
             intent.putExtra("transType", "All");
             startActivity(intent);
+        } else if (position == 7) {
+            Intent intent = new Intent(AccountActivity.this, TransactionView.class);
+            intent.putExtra("uid", res);
+            intent.putExtra("transType", "sold");
+            startActivity(intent);
         }
-
     }
 }
 

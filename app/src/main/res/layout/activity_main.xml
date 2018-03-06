@@ -38,7 +38,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="17dp"
+                android:minHeight="13dp"
                 android:orientation="horizontal"
                 app:layout_scrollFlags="scroll|enterAlways">
 
@@ -73,8 +73,6 @@
             android:id="@+id/bkObj"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
             android:divider="@color/transparent"
             android:dividerHeight="10dp"
             android:layoutAnimation="@anim/layout_animation_slide_right"

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -39,19 +38,12 @@ import android.widget.Toast;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
-import java.net.URL;
 import java.util.ArrayList;
 
-import javax.net.ssl.HttpsURLConnection;
-
-import cz.msebera.android.httpclient.conn.ConnectTimeoutException;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
     public Getjson getjsonobj;
@@ -60,12 +52,12 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<String> arrRatin;
     public ArrayList<String> arrurls;
     public ArrayList<String> arruploader;
-    String recTine = "new", recType = "ALL";
+    String recTine = "New", recType = "All", bkurl;
     String[] SpinarrTime = {"New", "Old"};
     String[] SpinarrType = {"All", "request", "users", "publishers"};
     RecyclerView bkObj;
     bkCustomAdapter bkAdapter;
-    int offset = 0;
+    int offset = 0, prevOffset = -1;
     Menu menu;
     int initSize = 0;
     boolean LoginStatus;
@@ -86,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+        bkurl = getString(R.string.httpUrl) + "/getImages.inc.php";
         bkObj = (RecyclerView) findViewById(R.id.bkObj);
         spinTime = (Spinner) findViewById(R.id.SpinmainToolbar_Time);
         spinType = (Spinner) findViewById(R.id.SpinmainToolbar_Sort);
@@ -94,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> spinTypeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, SpinarrType);
         spinTime.setAdapter(spinTimeAdapter);
         spinType.setAdapter(spinTypeAdapter);
-
         //setup array for main data
         arrid = new ArrayList<>();
         arrname = new ArrayList<>();
@@ -119,32 +111,32 @@ public class MainActivity extends AppCompatActivity {
         bkObj.setLayoutManager(llm);
         bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin, arruploader);
         bkObj.setAdapter(bkAdapter);
-        getURLs();
+
         scrollListener = new EndlessRecyclerViewScrollListener(llm) {
             @Override
             public void onLoadMore(final int page, int totalItemsCount, RecyclerView view) {
                 bkObj.post(new Runnable() {
                     @Override
                     public void run() {
-                        offset = page;
-                        int fsize = arrname.size() - 1;
+                        offset = initSize;
+                        initSize = initSize + 1;
+                        Log.d("scroll values ", "offset" + offset + " Prev" + prevOffset + " page " + page + " arrsize" + arrname.size());
                         getURLs();
-                        try {
-                            Thread.sleep(100);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        bkAdapter.notifyItemRangeInserted(fsize, 2);
+
+                        // bkObj.getAdapter().notifyItemInserted(arrname.size()-3);
+                        bkObj.getAdapter().notifyDataSetChanged();
                     }
                 });
             }
-            @Override
-            public void onScrolled(RecyclerView view, int dx, int dy) {
-                super.onScrolled(view, dx, dy);
-            }
         };
+        if (offset == 0) {
+            try {
+                Thread.sleep(8000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         bkObj.addOnScrollListener(scrollListener);
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -220,14 +212,20 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                recTine = "new";
+                recTine = "New";
             }
         });
         spinType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 recType = SpinarrType[position];
-                refreshAPP();
+                if (recType.contains("All")) {
+                    bkurl = getString(R.string.httpUrl) + "/getImages.inc.php";
+                    refreshAPP();
+                } else if (recType.contains("publishers") || recType.contains("request") || recType.contains("users")) {
+                    bkurl = getString(R.string.httpUrl) + "/getImagesSort.inc.php";
+                    refreshAPP();
+                }
             }
 
             @Override
@@ -283,46 +281,26 @@ public class MainActivity extends AppCompatActivity {
     }
     public void getURLs() {
         recyclerViewState = bkObj.getLayoutManager().onSaveInstanceState();
-        BufferedReader bufferedReader = null;
-        try {
-            URL url = new URL(getString(R.string.httpUrl) + "/getImages.inc.php");
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setDoInput(true);
-            con.setConnectTimeout(60000);
-            con.setRequestMethod("POST");
-            con.connect();
-            Log.i("SpinType", recTine + recType);
-            Uri.Builder builder = new Uri.Builder().appendQueryParameter("Offset", offset + "").appendQueryParameter("Time", recTine).appendQueryParameter("Type", recType);
-            String query = builder.build().getEncodedQuery();
 
-            //Open Connection for sending data
-            OutputStream os = con.getOutputStream();
-            BufferedWriter bwriter = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            bwriter.write(query);
-            bwriter.flush();
-            bwriter.close();
-            os.close();
-            con.connect();
-
-            int response_code = con.getResponseCode();
-            //Check if sucessfull connection made and read data
-            if (response_code == HttpsURLConnection.HTTP_OK) {
-            StringBuilder sb = new StringBuilder();
-            bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String json;
-            while ((json = bufferedReader.readLine()) != null) {
-                sb.append(json + "\n");
+        if (offset > prevOffset) {
+            Log.d("bkurl", bkurl);
+            OkHttpClient httpClient = new OkHttpClient();
+            Log.d("spintag", recType + " " + recTine);
+            RequestBody parameter = new FormBody.Builder().add("Offset", offset + "").add("Time", recTine).add("Type", recType).build();
+            okhttp3.Request request = new okhttp3.Request.Builder().url(bkurl).post(parameter).build();
+            String sb = "";
+            try {
+                Response response = httpClient.newCall(request).execute();
+                sb = response.body().string();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(MainActivity.this, "Cannot connect Check your Internet connection", Toast.LENGTH_LONG).show();
             }
-                Log.i("getJson in ma", sb.toString());
-            getjsonobj = new Getjson(sb.toString().trim());
+            if (!sb.isEmpty() && sb != null) {
+                getjsonobj = new Getjson(sb.trim());
             getImages();
             }
-        } catch (ConnectTimeoutException ce) {
-            Toast.makeText(getApplication(), "Check your internet", Toast.LENGTH_LONG).show();
-        } catch (SocketTimeoutException sc) {
-            Toast.makeText(getApplication(), "Cannot connect", Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
-            Log.e("error in dib", e.getMessage());
+            prevOffset = offset;
         }
 
     }
@@ -339,28 +317,25 @@ public class MainActivity extends AppCompatActivity {
             protected void onPostExecute(Void v) {
                 super.onPostExecute(v);
 
-                if (Getjson.arrname.size() != 0) {
-                    initSize = arrname.size();
-
-                arrname.add(Getjson.arrname.get(Getjson.arrname.size() - 1));
-                arrid.add(Getjson.arrid.get(Getjson.arrid.size() - 1));
-                arrurls.add(Getjson.arrurls.get(Getjson.arrurls.size() - 1));
-                arrRatin.add(Getjson.arrRatin.get(Getjson.arrRatin.size() - 1));
-                arruploader.add(Getjson.arrUploader.get(Getjson.arrRatin.size() - 1));
-                    //second time
-                    arrname.add(Getjson.arrname.get(Getjson.arrname.size() - 2));
-                    arrid.add(Getjson.arrid.get(Getjson.arrid.size() - 2));
-                    arrurls.add(Getjson.arrurls.get(Getjson.arrurls.size() - 2));
-                    arrRatin.add(Getjson.arrRatin.get(Getjson.arrRatin.size() - 2));
-                    arruploader.add(Getjson.arrUploader.get(Getjson.arrRatin.size() - 2));
-                bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin, arruploader);
+                if (Getjson.arrname.size() != 0 && Getjson.arrname.size() > 1) {
+                    for (int l = 1; l < 3; l++) {
+                        if (!arrid.contains(Getjson.arrname.get(Getjson.arrid.size() - l))) {
+                            arrname.add(Getjson.arrname.get(Getjson.arrname.size() - l));
+                            arrid.add(Getjson.arrid.get(Getjson.arrid.size() - l));
+                            arrurls.add(Getjson.arrurls.get(Getjson.arrurls.size() - l));
+                            arrRatin.add(Getjson.arrRatin.get(Getjson.arrRatin.size() - l));
+                            arruploader.add(Getjson.arrUploader.get(Getjson.arrRatin.size() - l));
+                        }
+                    }
+                    bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin, arruploader);
+                    bkAdapter.setHasStableIds(true);
                     bkObj.setAdapter(bkAdapter);
-                    bkObj.getLayoutManager().onRestoreInstanceState(recyclerViewState);
 
+                    bkObj.getLayoutManager().onRestoreInstanceState(recyclerViewState);
                 } else {
                     Toast.makeText(MainActivity.this, "No more books available now", Toast.LENGTH_LONG).show();
                 }
-                // bkAdapter.notifyItemRangeInserted(initSize, 2);
+
             }
 
             @Override
@@ -371,13 +346,12 @@ public class MainActivity extends AppCompatActivity {
         }
         GetImages getImages = new GetImages();
         getImages.execute();
-        bkObj.getAdapter().notifyDataSetChanged();
+        // bkObj.getAdapter().notifyDataSetChanged();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        scrollListener.resetState();
         SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
         runLayoutAnimation();
         LoginStatus = sp.getBoolean("IsLogged", false);
@@ -393,22 +367,13 @@ public class MainActivity extends AppCompatActivity {
             navUsr.setText(spusrname);
             navEmail.setText(spEmail);
         }
+        refreshAPP();
     }
 
 
     @Override
     public void onStart() {
         super.onStart();
-        scrollListener.resetState();
-    }
-
-    @Override
-    public void onRestart() {
-        super.onRestart();
-        scrollListener.resetState();
-    }
-
-    public void refreshAPP() {
         bkObj.invalidate();
         scrollListener.resetState();
         offset = 0;
@@ -417,6 +382,20 @@ public class MainActivity extends AppCompatActivity {
         arrRatin = new ArrayList<>();
         arrurls = new ArrayList<>();
         arruploader = new ArrayList<>();
+        getURLs();
+    }
+
+    public void refreshAPP() {
+        bkObj.invalidate();
+        scrollListener.resetState();
+        offset = 0;
+        initSize = -0;
+        prevOffset = -1;
+        arrid.clear();
+        arrname.clear();
+        arrRatin.clear();
+        arrurls.clear();
+        arruploader.clear();
         getURLs();
     }
 }

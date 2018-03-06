@@ -36,7 +36,6 @@ public class cartAdapter extends RecyclerView.Adapter<cartAdapter.ViewHolder> {
         ViewHolder viewHolder = new ViewHolder(imView);
         return viewHolder;
     }
-
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         pos = holder.getAdapterPosition();
@@ -50,6 +49,10 @@ public class cartAdapter extends RecyclerView.Adapter<cartAdapter.ViewHolder> {
                 CartDatabaseHelper cd = new CartDatabaseHelper(mcontext);
                 cd.deleteData(bkid.get(pos));
                 Toast.makeText(mcontext, bkid.get(pos), Toast.LENGTH_SHORT).show();
+                bookname.remove(position);
+                price.remove(position);
+                publisher.remove(position);
+                imgurl.remove(position);
                 notifyDataSetChanged();
             }
         });

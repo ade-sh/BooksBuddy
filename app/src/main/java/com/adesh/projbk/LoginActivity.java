@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -370,7 +371,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         }
 
-
+        private String getTokenFromPrefs() {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+            return preferences.getString("registration_id", null);
+        }
         @Override
         protected void onCancelled() {
             mAuthTask = null;

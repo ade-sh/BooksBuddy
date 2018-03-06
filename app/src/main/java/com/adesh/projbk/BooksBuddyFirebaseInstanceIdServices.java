@@ -1,5 +1,7 @@
 package com.adesh.projbk;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -18,6 +20,13 @@ public class BooksBuddyFirebaseInstanceIdServices extends FirebaseInstanceIdServ
     }
 
     private void sendRegistrationToServer(String token) {
+        // Access Shared Preferences
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        // Save to SharedPreferences
+        editor.putString("registration_id", token);
+        editor.apply();
         //Implement this method if you want to store the token on your server
     }
 }
