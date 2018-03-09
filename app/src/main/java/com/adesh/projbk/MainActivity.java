@@ -111,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
         bkObj.setLayoutManager(llm);
         bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin, arruploader);
         bkObj.setAdapter(bkAdapter);
-
         scrollListener = new EndlessRecyclerViewScrollListener(llm) {
             @Override
             public void onLoadMore(final int page, int totalItemsCount, RecyclerView view) {
@@ -119,23 +118,16 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         offset = initSize;
-                        initSize = initSize + 1;
                         Log.d("scroll values ", "offset" + offset + " Prev" + prevOffset + " page " + page + " arrsize" + arrname.size());
                         getURLs();
-
-                        // bkObj.getAdapter().notifyItemInserted(arrname.size()-3);
-                        bkObj.getAdapter().notifyDataSetChanged();
+                        bkObj.getAdapter().notifyItemRangeInserted(bkAdapter.getItemCount(), Getjson.arrname.size());
+                        initSize = initSize + 1;
+                        //bkObj.getAdapter().notifyDataSetChanged();
                     }
                 });
             }
         };
-        if (offset == 0) {
-            try {
-                Thread.sleep(8000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+
         bkObj.addOnScrollListener(scrollListener);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -280,10 +272,10 @@ public class MainActivity extends AppCompatActivity {
         bkObj.scheduleLayoutAnimation();
     }
     public void getURLs() {
-        recyclerViewState = bkObj.getLayoutManager().onSaveInstanceState();
+        // recyclerViewState = bkObj.getLayoutManager().onSaveInstanceState();
 
-        if (offset > prevOffset) {
-            Log.d("bkurl", bkurl);
+
+        Log.d("bkurl", bkurl);
             OkHttpClient httpClient = new OkHttpClient();
             Log.d("spintag", recType + " " + recTine);
             RequestBody parameter = new FormBody.Builder().add("Offset", offset + "").add("Time", recTine).add("Type", recType).build();
@@ -301,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
             getImages();
             }
             prevOffset = offset;
-        }
+
 
     }
 
@@ -330,8 +322,14 @@ public class MainActivity extends AppCompatActivity {
                     bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin, arruploader);
                     bkAdapter.setHasStableIds(true);
                     bkObj.setAdapter(bkAdapter);
-
-                    bkObj.getLayoutManager().onRestoreInstanceState(recyclerViewState);
+                    if (arrid.size() == 4) {
+                        arrname.remove(0);
+                        arrid.remove(0);
+                        arrurls.remove(0);
+                        arrRatin.remove(0);
+                        arruploader.remove(0);
+                    }
+                    //bkObj.getLayoutManager().onRestoreInstanceState(recyclerViewState);
                 } else {
                     Toast.makeText(MainActivity.this, "No more books available now", Toast.LENGTH_LONG).show();
                 }
@@ -346,7 +344,6 @@ public class MainActivity extends AppCompatActivity {
         }
         GetImages getImages = new GetImages();
         getImages.execute();
-        // bkObj.getAdapter().notifyDataSetChanged();
     }
 
     @Override

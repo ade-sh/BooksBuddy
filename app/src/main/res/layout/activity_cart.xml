@@ -15,7 +15,26 @@
         android:dividerHeight="10dp"
         android:layoutAnimation="@anim/layout_animation_fall_down"
         android:paddingLeft="4dp"
-        android:paddingRight="4dp" />
+        android:paddingRight="4dp">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <LinearLayout
+        android:id="@+id/ll_cartProgressbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80ffffff"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/progressBar2"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center_vertical|center_horizontal|center"
+            android:layout_marginTop="200dp" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -54,6 +54,9 @@ public class cartAdapter extends RecyclerView.Adapter<cartAdapter.ViewHolder> {
                 publisher.remove(position);
                 imgurl.remove(position);
                 notifyDataSetChanged();
+                if (mcontext instanceof CartActivity) {
+                    ((CartActivity) mcontext).fillDataFromdb();
+                }
             }
         });
     }

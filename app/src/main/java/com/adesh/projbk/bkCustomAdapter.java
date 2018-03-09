@@ -64,7 +64,7 @@ public class bkCustomAdapter extends RecyclerView.Adapter<bkCustomAdapter.ViewHo
         viewHolder.img.setTag(arrId.get(viewHolder.getAdapterPosition()));
         viewHolder.rate.setRating(Integer.parseInt(arrRatin.get(viewHolder.getAdapterPosition())));
         String ustr = arrUrl.get(viewHolder.getAdapterPosition());
-        Picasso.with(context1).load(context1.getString(R.string.httpUrl) + ustr).resize(800, 400).placeholder(R.drawable.defaultloading).into(viewHolder.img);
+        Picasso.with(context1).load(context1.getString(R.string.httpUrl) + ustr).placeholder(R.drawable.defaultloading).into(viewHolder.img);
         viewHolder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

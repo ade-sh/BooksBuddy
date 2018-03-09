@@ -3,37 +3,37 @@ package com.adesh.projbk;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-import cz.msebera.android.httpclient.Header;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
 
 public class CartActivity extends AppCompatActivity {
     RecyclerView rvCart;
     CartDatabaseHelper cartdatabase;
     TextView tvTotalPrice;
     Button Checkout;
-    int total, uid;
-    OkHttpClient httpClient;
-    ArrayList<String> bookname, publisher, price, imgurl, bkid;
+    int total;
+    String result;
+    LinearLayout llpb;
+    cartAdapter adapter;
+
+    ArrayList<String> bookname, publisher, price, imgurl, bkid, uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,19 +46,97 @@ public class CartActivity extends AppCompatActivity {
             startActivity(i);
             finish();
         }
-        //uid=getUserId();
         rvCart = (RecyclerView) findViewById(R.id.rvCart);
         bookname = new ArrayList<>();
         publisher = new ArrayList<>();
         price = new ArrayList<>();
         imgurl = new ArrayList<>();
         bkid = new ArrayList<>();
+        uid = new ArrayList<>();
+        llpb = (LinearLayout) findViewById(R.id.ll_cartProgressbar);
         tvTotalPrice = (TextView) findViewById(R.id.Tv_cartTotal);
         Checkout = (Button) findViewById(R.id.btn_cart_chk);
+        fillDataFromdb();
+            LinearLayoutManager llm = new LinearLayoutManager(this);
+            rvCart.setLayoutManager(llm);
+        adapter = new cartAdapter(CartActivity.this, bookname, publisher, price, imgurl, bkid);
+            rvCart.setAdapter(adapter);
+            rvCart.getAdapter().notifyDataSetChanged();
+            Checkout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!bookname.isEmpty()) {
+                        OkHttpClient httpClient = new OkHttpClient();
+                        Long now = System.currentTimeMillis();
+                        Date d = new Date(now);
+                        final int bill = (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
+                        llpb.setVisibility(View.VISIBLE);
+                        for (int a = 0; a < bkid.size(); a++) {
+                            Log.i("bill1", bill + "");
+                            Log.i("bknameinLoopcart", bookname.get(a));
+                            RequestBody parameter = new FormBody.Builder().add("bkid", bkid.get(a) + "").add("bill_id", bill + "")
+                                    .add("uid", uid.get(a) + "").add("bkname", bookname.get(a)).add("pbid", 3 + "").add("bkprice", price.get(a))
+                                    .add("total_price", total + "").add("pbname", publisher.get(a)).build();
+                            okhttp3.Request request = new okhttp3.Request.Builder().url(getString(R.string.httpUrl) + "/setOrders.inc.php").post(parameter).build();
+                            try {
+                                Thread.sleep(100);
+                                Response response = httpClient.newCall(request).execute();
+                                result = response.body().string();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        llpb.setVisibility(View.GONE);
+                        if (result.trim().contains("true")) {
+                            cartdatabase = new CartDatabaseHelper(CartActivity.this);
+                            cartdatabase.Deleteall();
+                            bookname.clear();
+                            publisher.clear();
+                            price.clear();
+                            imgurl.clear();
+                            bkid.clear();
+                            uid.clear();
+                            adapter.notifyDataSetChanged();
+                            tvTotalPrice.setText(" ");
+                            Intent intent = new Intent(CartActivity.this, viewInvoiceActivity.class);
+                            intent.putExtra("billid", bill + "");
+                            intent.putExtra("create", "true");
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(CartActivity.this, "Some error occurred", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+            });
+
+    }
+
+    public void updateTotal() {
+        total = 0;
+        for (int k = 0; k < price.size(); k++) {
+            total = total + Integer.parseInt(price.get(k));
+        }
+        tvTotalPrice.setText("Total: " + total + "");
+    }
+
+    public void fillDataFromdb() {
+        bookname = new ArrayList<>();
+        publisher = new ArrayList<>();
+        price = new ArrayList<>();
+        imgurl = new ArrayList<>();
+        bkid = new ArrayList<>();
+        uid = new ArrayList<>();
+        bookname.clear();
+        publisher.clear();
+        price.clear();
+        imgurl.clear();
+        bkid.clear();
+        uid.clear();
         cartdatabase = new CartDatabaseHelper(CartActivity.this);
         Cursor res = cartdatabase.getAllData();
         if (res.getCount() == 0) {
             Toast.makeText(this, "Nothing in your cart yet", Toast.LENGTH_SHORT).show();
+            tvTotalPrice.setText(" ");
             return;
         } else {
             long sizeofCur = cartdatabase.getCountSize();
@@ -69,66 +147,12 @@ public class CartActivity extends AppCompatActivity {
                         publisher.add(res.getString(6));
                         price.add(res.getString(4));
                         imgurl.add(res.getString(5));
-                        bkid.add(res.getString(2));
+                        bkid.add(res.getString(1));
+                        uid.add(res.getString(2));
                     }
                 }
+                updateTotal();
             }
-            LinearLayoutManager llm = new LinearLayoutManager(this);
-            rvCart.setLayoutManager(llm);
-            cartAdapter adapter = new cartAdapter(CartActivity.this, bookname, publisher, price, imgurl, bkid);
-            rvCart.setAdapter(adapter);
-            rvCart.getAdapter().notifyDataSetChanged();
-            for (int k = 0; k < price.size(); k++) {
-                total = total + Integer.parseInt(price.get(k));
-            }
-            tvTotalPrice.setText("Total: " + total + "");
-            Checkout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    OkHttpClient httpClient = new OkHttpClient();
-                    Date d = new Date();
-                    long bill = d.getTime() + uid;
-                    RequestBody parameter = new FormBody.Builder().add("bkid", bkid.get(1) + "").add("bill_id", bill + "").add("uid", uid + "").add("bkname", bookname.get(1)).add("pb_id", 3 + "").add("bkprice", price.get(1)).add("total_price", total + "").add("pnname", publisher.get(1)).build();
-                    okhttp3.Request request = new okhttp3.Request.Builder().url(getString(R.string.httpUrl) + "/setOrders.inc.php").post(parameter).build();
-                    PdfDocument sb;
-                    try {
-                        Response response = httpClient.newCall(request).execute();
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
         }
-    }
-
-    public int getUserId() {
-        SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
-        final String username = sp.getString("UserName", null);
-        String res = 0 + "";
-        AsyncHttpClient client = new AsyncHttpClient();
-        RequestParams params = new RequestParams();
-        params.put("username", username);
-        client.post(getString(R.string.httpUrl) + "/getUserID.inc.php", params, new TextHttpResponseHandler() {
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Toast.makeText(getApplicationContext(), "Cannot Connect", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                String res;
-                if (responseString.contains("false") && !responseString.contains("null")) {
-                    Toast.makeText(getApplicationContext(), "Some error occurred", Toast.LENGTH_SHORT).show();
-                } else {
-                    res = responseString.trim();
-                    SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sp.edit();
-                    editor.putString("Uid", res.trim());
-                    editor.apply();
-                }
-            }
-        });
-        return Integer.parseInt(res);
     }
 }
