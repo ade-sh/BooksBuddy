@@ -3,8 +3,10 @@ package com.adesh.projbk;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
@@ -19,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -48,6 +51,10 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 
 import cz.msebera.android.httpclient.Header;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 /**
@@ -57,8 +64,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 
     Button Regis;
-    String Memail, Mpassword;
     String Uid;
+    EditText etEmail;
+    TextView tvFrgtPwd;
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -113,6 +121,42 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+        tvFrgtPwd = (TextView) findViewById(R.id.tv_loginForgetpwd);
+        tvFrgtPwd.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder dialog = new AlertDialog.Builder(LoginActivity.this);
+                LayoutInflater inflater = getLayoutInflater();
+                View alertview = inflater.inflate(R.layout.ad_fgtpwd, null);
+                dialog.setView(alertview);
+                dialog.setTitle("Enter your Registered Email");
+                dialog.setCancelable(true);
+                etEmail = (EditText) alertview.findViewById(R.id.et_fgtPwdeml);
+                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        OkHttpClient client = new OkHttpClient();
+                        RequestBody parameter = new FormBody.Builder().add("email", etEmail.getText().toString()).build();
+                        okhttp3.Request request = new okhttp3.Request.Builder().url(getString(R.string.httpUrl) + "/recoverPassword.inc.php").post(parameter).build();
+                        try {
+                            Response response = client.newCall(request).execute();
+                            String sb = response.body().string();
+                            Toast.makeText(getApplication(), sb, Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                dialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                dialog.create();
+                dialog.show();
+            }
+        });
     }
 
 

@@ -73,6 +73,7 @@
             android:id="@+id/bkObj"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:animateLayoutChanges="false"
             android:divider="@color/transparent"
             android:dividerHeight="10dp"
             android:layoutAnimation="@anim/layout_animation_slide_right"

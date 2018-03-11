@@ -120,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
                         offset = initSize;
                         Log.d("scroll values ", "offset" + offset + " Prev" + prevOffset + " page " + page + " arrsize" + arrname.size());
                         getURLs();
-                        bkObj.getAdapter().notifyItemRangeInserted(bkAdapter.getItemCount(), Getjson.arrname.size());
                         initSize = initSize + 1;
                         //bkObj.getAdapter().notifyDataSetChanged();
                     }
@@ -272,12 +271,9 @@ public class MainActivity extends AppCompatActivity {
         bkObj.scheduleLayoutAnimation();
     }
     public void getURLs() {
-        // recyclerViewState = bkObj.getLayoutManager().onSaveInstanceState();
-
-
         Log.d("bkurl", bkurl);
             OkHttpClient httpClient = new OkHttpClient();
-            Log.d("spintag", recType + " " + recTine);
+        Log.d("spintag", recType + " " + recTine + "offset" + offset);
             RequestBody parameter = new FormBody.Builder().add("Offset", offset + "").add("Time", recTine).add("Type", recType).build();
             okhttp3.Request request = new okhttp3.Request.Builder().url(bkurl).post(parameter).build();
             String sb = "";
@@ -310,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
                 super.onPostExecute(v);
 
                 if (Getjson.arrname.size() != 0 && Getjson.arrname.size() > 1) {
-                    for (int l = 1; l < 3; l++) {
+                    for (int l = 1; l < Getjson.arrname.size(); l++) {
                         if (!arrid.contains(Getjson.arrname.get(Getjson.arrid.size() - l))) {
                             arrname.add(Getjson.arrname.get(Getjson.arrname.size() - l));
                             arrid.add(Getjson.arrid.get(Getjson.arrid.size() - l));
@@ -319,17 +315,12 @@ public class MainActivity extends AppCompatActivity {
                             arruploader.add(Getjson.arrUploader.get(Getjson.arrRatin.size() - l));
                         }
                     }
+                    recyclerViewState = bkObj.getLayoutManager().onSaveInstanceState();
                     bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin, arruploader);
                     bkAdapter.setHasStableIds(true);
                     bkObj.setAdapter(bkAdapter);
-                    if (arrid.size() == 4) {
-                        arrname.remove(0);
-                        arrid.remove(0);
-                        arrurls.remove(0);
-                        arrRatin.remove(0);
-                        arruploader.remove(0);
-                    }
-                    //bkObj.getLayoutManager().onRestoreInstanceState(recyclerViewState);
+                    bkObj.getLayoutManager().onRestoreInstanceState(recyclerViewState);
+                    bkObj.getAdapter().notifyItemRangeInserted(bkAdapter.getItemCount(), Getjson.arrname.size());
                 } else {
                     Toast.makeText(MainActivity.this, "No more books available now", Toast.LENGTH_LONG).show();
                 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import java.io.IOException;
 
@@ -23,6 +24,7 @@ public class viewInvoiceActivity extends AppCompatActivity {
         wvshowpdf = (WebView) findViewById(R.id.wv_invoice);
         wvshowpdf.getSettings().setLoadWithOverviewMode(true);
         wvshowpdf.getSettings().setUseWideViewPort(true);
+        wvshowpdf.setWebViewClient(new WebViewClient());
         Intent intent = getIntent();
         String bill = intent.getStringExtra("billid");
         RequestBody parameter = new FormBody.Builder().add("billid", bill).build();

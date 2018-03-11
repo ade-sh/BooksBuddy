@@ -2,12 +2,14 @@ package com.adesh.projbk;
 
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class bkUserFragment extends Fragment {
@@ -27,6 +29,7 @@ public class bkUserFragment extends Fragment {
         name = (TextView) v.findViewById(R.id.tvBkfrag_UserName);
         Phone = (TextView) v.findViewById(R.id.tvBkfrag_Phone);
         Email = (TextView) v.findViewById(R.id.tvBkfrag_Email);
+        ImageView call = (ImageView) v.findViewById(R.id.ivBkFrag_call);
         name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,7 +53,13 @@ public class bkUserFragment extends Fragment {
                 return true;
             }
         });
+        call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", Getjson.JPhone.trim(), null));
+                startActivity(intent);
+            }
+        });
         return v;
     }
-
 }
