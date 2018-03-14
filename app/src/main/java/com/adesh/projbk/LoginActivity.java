@@ -141,6 +141,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         try {
                             Response response = client.newCall(request).execute();
                             String sb = response.body().string();
+                            Log.i("frgtpwd res", sb);
                             Toast.makeText(getApplication(), sb, Toast.LENGTH_SHORT).show();
                         } catch (IOException e) {
                             e.printStackTrace();

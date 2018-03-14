@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<String> arrRatin;
     public ArrayList<String> arrurls;
     public ArrayList<String> arruploader;
+    public ArrayList<String> arrPrice;
     String recTine = "New", recType = "All", bkurl;
     String[] SpinarrTime = {"New", "Old"};
     String[] SpinarrType = {"All", "request", "users", "publishers"};
@@ -93,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
         arrRatin = new ArrayList<>();
         arrurls = new ArrayList<>();
         arruploader = new ArrayList<>();
+        arrPrice = new ArrayList<>();
         LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(MainActivity.this, R.anim.layout_animation_fall_down);
         bkObj.setLayoutAnimation(animation);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
         llm = new LinearLayoutManager(this);
         bkObj.setLayoutManager(llm);
-        bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin, arruploader);
+        bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin, arruploader, arrPrice);
         bkObj.setAdapter(bkAdapter);
         scrollListener = new EndlessRecyclerViewScrollListener(llm) {
             @Override
@@ -313,10 +315,11 @@ public class MainActivity extends AppCompatActivity {
                             arrurls.add(Getjson.arrurls.get(Getjson.arrurls.size() - l));
                             arrRatin.add(Getjson.arrRatin.get(Getjson.arrRatin.size() - l));
                             arruploader.add(Getjson.arrUploader.get(Getjson.arrRatin.size() - l));
+                            arrPrice.add(Getjson.arrPrice.get(Getjson.arrRatin.size() - l));
                         }
                     }
                     recyclerViewState = bkObj.getLayoutManager().onSaveInstanceState();
-                    bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin, arruploader);
+                    bkAdapter = new bkCustomAdapter(MainActivity.this, arrname, arrurls, arrid, arrRatin, arruploader, arrPrice);
                     bkAdapter.setHasStableIds(true);
                     bkObj.setAdapter(bkAdapter);
                     bkObj.getLayoutManager().onRestoreInstanceState(recyclerViewState);
@@ -370,6 +373,7 @@ public class MainActivity extends AppCompatActivity {
         arrRatin = new ArrayList<>();
         arrurls = new ArrayList<>();
         arruploader = new ArrayList<>();
+        arrPrice = new ArrayList<>();
         getURLs();
     }
 
@@ -384,6 +388,7 @@ public class MainActivity extends AppCompatActivity {
         arrRatin.clear();
         arrurls.clear();
         arruploader.clear();
+        arrPrice.clear();
         getURLs();
     }
 }

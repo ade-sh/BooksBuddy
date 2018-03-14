@@ -70,6 +70,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="?android:attr/windowBackground"
+        app:itemIconTint="@drawable/bnav_slected_color"
+        app:itemTextColor="@drawable/bnav_slected_color"
         app:layout_scrollFlags="enterAlways"
         app:menu="@menu/navigation"
         tools:layout_editor_absoluteX="236dp"

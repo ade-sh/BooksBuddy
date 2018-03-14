@@ -51,28 +51,33 @@ public class bk_details extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             pb.setVisibility(View.GONE);
-            Fragment frag=null;
+            Fragment frag1 = bkfragment;
+            Fragment frag2 = new ReviewsFragment();
+            Fragment frag3 = new bkUserFragment();
             FragmentManager fm=getSupportFragmentManager();
             FragmentTransaction ft=fm.beginTransaction();
+            if (!frag1.isAdded() && !frag3.isAdded()) {
+                ft.add(R.id.fragPlace, frag3).commit();
+            }
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    frag=bkfragment;
-                    ft.replace(R.id.fragPlace, frag).commit();
+                    ft.show(frag1);
+                    ft.hide(frag2).hide(frag3).commit();
                     return true;
                 case R.id.navigation_reviews:
                     if (Getjson.arrUploader.get(0) != null && Getjson.arrUploader.get(0).trim().contains("publisher")) {
                         if (Getjson.arrRvHead != null && !Getjson.arrRvHead.isEmpty()) {
-                    frag = new ReviewsFragment();
-                            ft.replace(R.id.fragPlace, frag).addToBackStack(null).commit();
+                            ft.show(frag2);
+                            ft.hide(frag1).hide(frag3).commit();
                         } else {
                             Toast.makeText(bk_details.this, "Please wait... fetching Reviews", Toast.LENGTH_SHORT).show();
                         }
                     }
                     return true;
                 case R.id.navigation_about:
-                        pb.setVisibility(View.GONE);
-                    frag=new bkUserFragment();
-                        ft.replace(R.id.fragPlace, frag).addToBackStack(null).commit();
+                    pb.setVisibility(View.GONE);
+                    ft.show(frag3);
+                    ft.hide(frag1).hide(frag2).commit();
                     return true;
             }
             return false;
@@ -184,6 +189,11 @@ public class bk_details extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, String response) {
                 Getjson getjsonobjRev = new Getjson(response);
                 getjsonobjRev.getReviews();
+                FragmentManager fm = getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                Fragment frag2 = new ReviewsFragment();
+                ft.add(R.id.fragPlace, frag2);
+                ft.commit();
             }
         });
     }
@@ -270,8 +280,11 @@ public class bk_details extends AppCompatActivity {
             Picasso.with(bk_details.this).load((getString(R.string.httpUrl) + ustr)).placeholder(R.drawable.defaultloading).into(bk_img);
             FragmentManager fm=getSupportFragmentManager();
             FragmentTransaction ft=fm.beginTransaction();
-            ft.replace(R.id.fragPlace, bkfragment);
-            ft.commit();
+            ft.add(R.id.fragPlace, bkfragment);
+            Fragment frag3 = new bkUserFragment();
+            if (bkfragment.isAdded()) {
+                ft.add(R.id.fragPlace, frag3).commit();
+            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -279,7 +292,6 @@ public class bk_details extends AppCompatActivity {
                     if (Getjson.arrUploader.get(0).trim().contains("publisher")) {
                         getReviews();
                     }
-                    Toast.makeText(bk_details.this,Getjson.arruid.get(0),Toast.LENGTH_SHORT).show();
                 }
             });
         }

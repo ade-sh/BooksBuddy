@@ -43,7 +43,14 @@ public class transactionListAdapter extends RecyclerView.Adapter<transactionList
         holder.tvname.setText(arrTransName.get(position));
         holder.tvStatus.setText(arrTransStatus.get(position));
         holder.tvtime.setText(arrTransTime.get(position));
+        if (arrTransType.get(position).contains("order")) {
+            holder.tvname.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
+                }
+            });
+        }
     }
 
     @Override

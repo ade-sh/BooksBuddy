@@ -1,5 +1,6 @@
 package com.adesh.projbk;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -15,14 +16,17 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -47,8 +51,11 @@ import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 
 import cz.msebera.android.httpclient.Header;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
 
-public class AccountActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
+public class AccountActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     Button btnLogout, btnsavImg, btncngImg;
     Getjson getjsonobj;
@@ -101,7 +108,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
         ivAccImg.setOnClickListener(this);
-
+        lvaccdetail.setOnItemLongClickListener(this);
         startFill();
 
     }
@@ -114,9 +121,9 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
             protected void onPreExecute() {
                 super.onPreExecute();
                 if (username == null) {
-                SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
-                username = sp.getString("UserName", null);
-                Password = sp.getString("Password", null);
+                    SharedPreferences sp = getSharedPreferences("UserLogin", MODE_PRIVATE);
+                    username = sp.getString("UserName", null);
+                    Password = sp.getString("Password", null);
                     uid = sp.getString("Uid", null);
                     Toast.makeText(AccountActivity.this, uid, Toast.LENGTH_SHORT).show();
                 }
@@ -321,18 +328,23 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        int Click = 0;
         if (res == null) {
             Toast.makeText(AccountActivity.this, "Please wait,Loading items", Toast.LENGTH_SHORT).show();
             return;
         }
         if (position == 0) {
-            Toast.makeText(getApplicationContext(), "Change name not available now", Toast.LENGTH_SHORT).show();
+
+            Toast.makeText(getApplicationContext(), "Tap again to Change name", Toast.LENGTH_SHORT).show();
         } else if (position == 1) {
-            Toast.makeText(getApplicationContext(), "Change Phone no not available now", Toast.LENGTH_SHORT).show();
+
+            Toast.makeText(getApplicationContext(), "Tap again to Change Phone no", Toast.LENGTH_SHORT).show();
         } else if (position == 2) {
-            Toast.makeText(getApplicationContext(), "Email Change  not available now", Toast.LENGTH_SHORT).show();
+
+            Toast.makeText(getApplicationContext(), "Tap again to Change Email no", Toast.LENGTH_SHORT).show();
         } else if (position == 3) {
-            Toast.makeText(getApplicationContext(), "Password Change  not available now", Toast.LENGTH_SHORT).show();
+
+            Toast.makeText(getApplicationContext(), "Tap again to Change  Password", Toast.LENGTH_SHORT).show();
         } else if (position == 4) {
             Toast.makeText(getApplicationContext(), "Location  not available now", Toast.LENGTH_SHORT).show();
         } else if (position == 5) {
@@ -357,5 +369,116 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
             startActivity(intent);
         }
     }
-}
 
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(AccountActivity.this);
+        LayoutInflater inflater = getLayoutInflater();
+        if (position == 0) {
+            View viewad = inflater.inflate(R.layout.ad_fgtpwd, null);
+            dialog.setView(viewad);
+            dialog.setTitle("Change name");
+            dialog.setMessage("Enter new name");
+            final EditText etname = (EditText) viewad.findViewById(R.id.et_fgtPwdeml);
+            dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            dialog.setPositiveButton("Change", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    OkHttpClient httpClient = new OkHttpClient();
+                    FormBody params = new FormBody.Builder().add("new_name", etname.getText().toString()).add("email", Getjson.JEmail.trim()).build();
+                    okhttp3.Request request = new okhttp3.Request.Builder().url(getString(R.string.httpUrl) + "/changeName.inc.php").post(params).build();
+                    try {
+                        Response response = httpClient.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        if (position == 1) {
+            View viewad = inflater.inflate(R.layout.ad_fgtpwd, null);
+            dialog.setView(viewad);
+            dialog.setTitle("Change Phone no");
+            dialog.setMessage("Enter new phone");
+            final EditText etname = (EditText) viewad.findViewById(R.id.et_fgtPwdeml);
+            dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            dialog.setPositiveButton("Change", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    OkHttpClient httpClient = new OkHttpClient();
+                    FormBody params = new FormBody.Builder().add("new_phone", etname.getText().toString()).add("email", Getjson.JEmail.trim()).build();
+                    okhttp3.Request request = new okhttp3.Request.Builder().url(getString(R.string.httpUrl) + "/changePhone.inc.php").post(params).build();
+                    try {
+                        Response response = httpClient.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        if (position == 2) {
+            View viewad = inflater.inflate(R.layout.ad_fgtpwd, null);
+            dialog.setView(viewad);
+            dialog.setTitle("Change Email");
+            dialog.setMessage("Enter new Email id");
+            final EditText etname = (EditText) viewad.findViewById(R.id.et_fgtPwdeml);
+            dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            dialog.setPositiveButton("Change", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    OkHttpClient httpClient = new OkHttpClient();
+                    FormBody params = new FormBody.Builder().add("new_email", etname.getText().toString()).add("email", Getjson.JEmail.trim()).build();
+                    okhttp3.Request request = new okhttp3.Request.Builder().url(getString(R.string.httpUrl) + "/changeEmail.inc.php").post(params).build();
+                    try {
+                        Response response = httpClient.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        if (position == 3) {
+            View viewad = inflater.inflate(R.layout.ad_chgpwd, null);
+            dialog.setView(viewad);
+            dialog.setTitle("Change Password");
+            dialog.setMessage("Enter new Password");
+            final EditText etoldPwd = (EditText) viewad.findViewById(R.id.et_chgPwdeml);
+            final EditText etnewPwd = (EditText) viewad.findViewById(R.id.et_newchgPwdeml);
+            dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            dialog.setPositiveButton("Change", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    OkHttpClient httpClient = new OkHttpClient();
+                    FormBody params = new FormBody.Builder().add("oldPwd", etoldPwd.getText().toString()).add("email", Getjson.JEmail.trim()).add("newPwd", etnewPwd.getText().toString()).build();
+                    okhttp3.Request request = new okhttp3.Request.Builder().url(getString(R.string.httpUrl) + "/changePassword.inc.php").post(params).build();
+                    try {
+                        Response response = httpClient.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        return true;
+    }
+}

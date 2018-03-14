@@ -23,15 +23,17 @@ public class bkCustomAdapter extends RecyclerView.Adapter<bkCustomAdapter.ViewHo
     ArrayList<String> arrUrl;
     ArrayList<String> arrRatin;
     ArrayList<String> arrUploader;
+    ArrayList<String> arrPrice;
     private Context context1;
 
-    public bkCustomAdapter(Context context, ArrayList book, ArrayList Urls, ArrayList<String> Img_id, ArrayList arrRatin, ArrayList arrUploader) {
+    public bkCustomAdapter(Context context, ArrayList book, ArrayList Urls, ArrayList<String> Img_id, ArrayList arrRatin, ArrayList arrUploader, ArrayList arrprice) {
         this.arrBook = book;
         this.arrUrl = Urls;
         this.context1 = context;
         this.arrId = Img_id;
         this.arrRatin = arrRatin;
         this.arrUploader = arrUploader;
+        this.arrPrice = arrprice;
     }
 
     private Context getContext() {
@@ -58,7 +60,7 @@ public class bkCustomAdapter extends RecyclerView.Adapter<bkCustomAdapter.ViewHo
             viewHolder.Uploader.setText("Request");
             viewHolder.Uploader.setBackgroundColor(Color.CYAN);
         } else {
-            viewHolder.Uploader.setVisibility(View.GONE);
+            viewHolder.Uploader.setText("₹" + arrPrice.get(viewHolder.getAdapterPosition()));
         }
         viewHolder.Title.setText(arrBook.get(viewHolder.getAdapterPosition()));
         viewHolder.img.setTag(arrId.get(viewHolder.getAdapterPosition()));

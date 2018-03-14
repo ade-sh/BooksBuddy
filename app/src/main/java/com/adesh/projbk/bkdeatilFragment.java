@@ -83,7 +83,7 @@ public class bkdeatilFragment extends Fragment {
         if (Getjson.arrname.size() > 0) {
         et_bkName.setText(Getjson.arrname.get(0));
         et_bkDisk.setText(Getjson.arrDisc.get(0));
-        price.setText(Getjson.arrPrice.get(0));
+            price.setText("₹" + Getjson.arrPrice.get(0));
         mTime.setText(Getjson.arrTime.get(0));//Reviews "+Getjson.arrRvCount.get(0));
             ratingBar.setRating(Integer.parseInt(Getjson.arrRatin.get(0)));
         }
