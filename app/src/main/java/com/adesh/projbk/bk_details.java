@@ -42,7 +42,7 @@ import cz.msebera.android.httpclient.Header;
 public class bk_details extends AppCompatActivity {
     public Getjson getjsonobj;
     int load = 0;
-    Fragment bkfragment;
+    Fragment bkfragment, frag2 = new ReviewsFragment(), frag3 = new bkUserFragment();
     ImageView bk_img;
     ProgressBar pb;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -52,23 +52,26 @@ public class bk_details extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             pb.setVisibility(View.GONE);
             Fragment frag1 = bkfragment;
-            Fragment frag2 = new ReviewsFragment();
-            Fragment frag3 = new bkUserFragment();
             FragmentManager fm=getSupportFragmentManager();
             FragmentTransaction ft=fm.beginTransaction();
-            if (!frag1.isAdded() && !frag3.isAdded()) {
-                ft.add(R.id.fragPlace, frag3).commit();
-            }
             switch (item.getItemId()) {
                 case R.id.navigation_home:
+                    if (!bkfragment.isAdded() || frag1.isDetached()) {
+                        ft.replace(R.id.fragPlace1, frag1);
+                    }
                     ft.show(frag1);
-                    ft.hide(frag2).hide(frag3).commit();
+                    ft.hide(frag2).hide(frag3);
+                    ft.commit();
                     return true;
                 case R.id.navigation_reviews:
                     if (Getjson.arrUploader.get(0) != null && Getjson.arrUploader.get(0).trim().contains("publisher")) {
                         if (Getjson.arrRvHead != null && !Getjson.arrRvHead.isEmpty()) {
+                            if (!frag2.isAdded() || frag2.isDetached()) {
+                                ft.replace(R.id.fragPlace2, frag2);
+                            }
                             ft.show(frag2);
-                            ft.hide(frag1).hide(frag3).commit();
+                            ft.hide(frag3).hide(frag1);
+                            ft.commit();
                         } else {
                             Toast.makeText(bk_details.this, "Please wait... fetching Reviews", Toast.LENGTH_SHORT).show();
                         }
@@ -76,8 +79,12 @@ public class bk_details extends AppCompatActivity {
                     return true;
                 case R.id.navigation_about:
                     pb.setVisibility(View.GONE);
+                    if (!frag3.isAdded()) {
+                        ft.replace(R.id.fragPlace3, frag3);
+                    }
                     ft.show(frag3);
-                    ft.hide(frag1).hide(frag2).commit();
+                    ft.hide(frag1).hide(frag2);
+                    ft.commit();
                     return true;
             }
             return false;
@@ -189,11 +196,6 @@ public class bk_details extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, String response) {
                 Getjson getjsonobjRev = new Getjson(response);
                 getjsonobjRev.getReviews();
-                FragmentManager fm = getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                Fragment frag2 = new ReviewsFragment();
-                ft.add(R.id.fragPlace, frag2);
-                ft.commit();
             }
         });
     }
@@ -278,13 +280,10 @@ public class bk_details extends AppCompatActivity {
         protected void onPostExecute(String result) {
             String ustr = Getjson.arrurls.get(0);
             Picasso.with(bk_details.this).load((getString(R.string.httpUrl) + ustr)).placeholder(R.drawable.defaultloading).into(bk_img);
-            FragmentManager fm=getSupportFragmentManager();
+            FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft=fm.beginTransaction();
-            ft.add(R.id.fragPlace, bkfragment);
-            Fragment frag3 = new bkUserFragment();
-            if (bkfragment.isAdded()) {
-                ft.add(R.id.fragPlace, frag3).commit();
-            }
+            ft.add(R.id.fragPlace1, bkfragment);
+            ft.commit();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -292,6 +291,7 @@ public class bk_details extends AppCompatActivity {
                     if (Getjson.arrUploader.get(0).trim().contains("publisher")) {
                         getReviews();
                     }
+                    Toast.makeText(bk_details.this, Getjson.arruid.get(0), Toast.LENGTH_SHORT).show();
                 }
             });
         }

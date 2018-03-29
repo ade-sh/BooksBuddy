@@ -125,7 +125,6 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
                     username = sp.getString("UserName", null);
                     Password = sp.getString("Password", null);
                     uid = sp.getString("Uid", null);
-                    Toast.makeText(AccountActivity.this, uid, Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -335,16 +334,16 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
         }
         if (position == 0) {
 
-            Toast.makeText(getApplicationContext(), "Tap again to Change name", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Long Tap to Change name", Toast.LENGTH_SHORT).show();
         } else if (position == 1) {
 
-            Toast.makeText(getApplicationContext(), "Tap again to Change Phone no", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Long Tap to Change Phone no", Toast.LENGTH_SHORT).show();
         } else if (position == 2) {
 
-            Toast.makeText(getApplicationContext(), "Tap again to Change Email no", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Long Tap to Change Email no", Toast.LENGTH_SHORT).show();
         } else if (position == 3) {
 
-            Toast.makeText(getApplicationContext(), "Tap again to Change  Password", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Long Tap to Change  Password", Toast.LENGTH_SHORT).show();
         } else if (position == 4) {
             Toast.makeText(getApplicationContext(), "Location  not available now", Toast.LENGTH_SHORT).show();
         } else if (position == 5) {
@@ -380,6 +379,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
             dialog.setTitle("Change name");
             dialog.setMessage("Enter new name");
             final EditText etname = (EditText) viewad.findViewById(R.id.et_fgtPwdeml);
+            etname.setHint("Name");
             dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -399,6 +399,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 }
             });
+            dialog.show();
         }
         if (position == 1) {
             View viewad = inflater.inflate(R.layout.ad_fgtpwd, null);
@@ -406,6 +407,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
             dialog.setTitle("Change Phone no");
             dialog.setMessage("Enter new phone");
             final EditText etname = (EditText) viewad.findViewById(R.id.et_fgtPwdeml);
+            etname.setHint("Phone no");
             dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -425,6 +427,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 }
             });
+            dialog.show();
         }
         if (position == 2) {
             View viewad = inflater.inflate(R.layout.ad_fgtpwd, null);
@@ -451,6 +454,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 }
             });
+            dialog.show();
         }
         if (position == 3) {
             View viewad = inflater.inflate(R.layout.ad_chgpwd, null);
@@ -478,6 +482,7 @@ public class AccountActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 }
             });
+            dialog.show();
         }
         return true;
     }

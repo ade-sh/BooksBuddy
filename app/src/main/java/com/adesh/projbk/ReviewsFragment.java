@@ -23,10 +23,7 @@ public class ReviewsFragment extends Fragment {
     ArrayList<String> arrUser;
     ArrayList<Integer> arrReview;
     ProgressBar pb;
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
+
     public ReviewsFragment() {
     }
 

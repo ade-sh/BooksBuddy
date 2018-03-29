@@ -51,7 +51,6 @@
             android:name=".SplashActivity"
             android:launchMode="singleTop"
             android:theme="@style/SplahTheme">
-            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -78,7 +77,7 @@
         </service>
 
         <activity android:name=".MessageActivity" />
-        <activity android:name=".viewInvoiceActivity"></activity>
+        <activity android:name=".viewInvoiceActivity" />
     </application>
 
 </manifest>

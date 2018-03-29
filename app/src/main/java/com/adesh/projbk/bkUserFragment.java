@@ -15,11 +15,9 @@ import android.widget.TextView;
 public class bkUserFragment extends Fragment {
     TextView name, Email, Phone;
 
-
     public bkUserFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,

@@ -51,15 +51,24 @@
                         android:layout_height="100dp"
                         android:layout_marginLeft="120dp"
                         android:visibility="gone" />
-
                 </LinearLayout>
-
                 <LinearLayout
-                    android:id="@+id/fragPlace"
+                    android:id="@+id/fragPlace1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"></LinearLayout>
+                    android:orientation="vertical" />
 
+                <LinearLayout
+                    android:id="@+id/fragPlace2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" />
+
+                <LinearLayout
+                    android:id="@+id/fragPlace3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" />
             </FrameLayout>
         </LinearLayout>
     </ScrollView>
